@@ -15,8 +15,8 @@ function useUpdateUser() {
     try {
       // Use mutate with the fetcher for PATCH request
       const updatedData = await mutate(
-        `https://little-rabbit-67.convex.site/user?userId=${userId}`,
-        fetcher(`https://little-rabbit-67.convex.site/user?userId=${userId}`, {
+        `https://different-armadillo-940.convex.site/user?userId=${userId}`,
+        fetcher(`https://different-armadillo-940.convex.site/user?userId=${userId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

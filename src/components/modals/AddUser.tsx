@@ -30,7 +30,7 @@ const AddUserModal: FC<IAddUserModal> = ({ isOpen, onClose }) => {
 
     try {
       const response = await fetch(
-        "https://little-rabbit-67.convex.site/user",
+        "https://different-armadillo-940.convex.site/user",
         {
           method: "POST",
           headers: {

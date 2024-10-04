@@ -19,7 +19,7 @@ function useFetchCurrentUser() {
 
   const { data, error, isLoading } = useSWR(
     token
-      ? `https://little-rabbit-67.convex.site/currentUser?id=${userId}`
+      ? `https://different-armadillo-940.convex.site/currentUser?id=${userId}`
       : null,
     fetcher
   );

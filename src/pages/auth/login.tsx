@@ -37,6 +37,7 @@ const Login = () => {
       {/* Right Side */}
       <div className="login-right">
         <h2>Welcome back!</h2>
+        {/* @ts-ignore */}
         <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
           <div className="input-group">
             <input
@@ -44,7 +45,13 @@ const Login = () => {
               placeholder="you@example.com"
               {...register("email", { required: "Email is required" })}
             />
-            {errors.email && <p className="error">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="error">
+                {typeof errors.email?.message === "string"
+                  ? errors.email.message
+                  : null}
+              </p>
+            )}
           </div>
           <div className="input-group">
             <input
@@ -53,7 +60,11 @@ const Login = () => {
               {...register("password", { required: "Password is required" })}
             />
             {errors.password && (
-              <p className="error">{errors.password.message}</p>
+              <p className="error">
+                {typeof errors.password?.message === "string"
+                  ? errors.password.message
+                  : null}
+              </p>
             )}
           </div>
           <div className="forgot-password">

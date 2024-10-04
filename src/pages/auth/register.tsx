@@ -62,7 +62,7 @@ const RegisterOrganization: FC = () => {
 
     try {
       const response = await fetch(
-        "https://little-rabbit-67.convex.site/organization",
+        "https://different-armadillo-940.convex.site/organization",
         {
           method: "POST",
           headers: {

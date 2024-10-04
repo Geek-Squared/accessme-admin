@@ -14,8 +14,8 @@ function useUpdateSite() {
   const updateSite = async (siteId: string, fieldsToUpdate: any) => {
     try {
       const updatedData = await mutate(
-        `https://little-rabbit-67.convex.site/site?id=${siteId}`,
-        fetcher(`https://little-rabbit-67.convex.site/site?id=${siteId}`, {
+        `https://different-armadillo-940.convex.site/site?id=${siteId}`,
+        fetcher(`https://different-armadillo-940.convex.site/site?id=${siteId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

@@ -30,7 +30,7 @@ const SignUp = () => {
     console.log(response);
   };
 
-  const password = watch("password"); // Watch password for re-enter validation
+  const password = watch("password");
 
   return (
     <div className="login-container">
@@ -51,6 +51,7 @@ const SignUp = () => {
       {/* Right Side */}
       <div className="login-right">
         <h2>Welcome!</h2>
+        {/* @ts-ignore */}
         <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
           {/* Username Field */}
           <div className="input-group">
@@ -62,7 +63,11 @@ const SignUp = () => {
               {...register("username", { required: "Username is required" })}
             />
             {errors.username && (
-              <span className="error">{errors.username.message}</span>
+              <span className="error">
+                {typeof errors.username?.message === "string"
+                  ? errors.username.message
+                  : null}
+              </span>
             )}
           </div>
 
@@ -82,7 +87,11 @@ const SignUp = () => {
               })}
             />
             {errors.email && (
-              <span className="error">{errors.email.message}</span>
+              <span className="error">
+                {typeof errors.email?.message === "string"
+                  ? errors.email.message
+                  : null}
+              </span>
             )}
           </div>
 
@@ -102,7 +111,11 @@ const SignUp = () => {
               })}
             />
             {errors.password && (
-              <span className="error">{errors.password.message}</span>
+              <span className="error">
+                {typeof errors.password?.message === "string"
+                  ? errors.password.message
+                  : null}
+              </span>
             )}
           </div>
 
@@ -120,7 +133,11 @@ const SignUp = () => {
               })}
             />
             {errors.confirmPassword && (
-              <span className="error">{errors.confirmPassword.message}</span>
+              <span className="error">
+                {typeof errors.confirmPassword?.message === "string"
+                  ? errors.confirmPassword.message
+                  : null}
+              </span>
             )}
           </div>
 

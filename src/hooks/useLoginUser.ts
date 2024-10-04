@@ -10,8 +10,8 @@ function useLogin() {
 
   const login = async (email: string, password: string) => {
     const response = await mutate(
-      "https://little-rabbit-67.convex.site/auth/admin",
-      fetcher("https://little-rabbit-67.convex.site/auth/admin", {
+      "https://different-armadillo-940.convex.site/auth/admin",
+      fetcher("https://different-armadillo-940.convex.site/auth/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -38,7 +38,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
     try {
       // 1. Create the personnel profile
       const response = await fetch(
-        "https://little-rabbit-67.convex.site/user-personnel",
+        "https://different-armadillo-940.convex.site/user-personnel",
         {
           method: "POST",
           headers: {

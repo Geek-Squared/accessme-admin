@@ -7,7 +7,7 @@ function useFetchOrganization() {
   const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json());
 
   const { data, error, isLoading } = useSWR(
-    "https://little-rabbit-67.convex.site/organization",
+    "https://different-armadillo-940.convex.site/organization",
     fetcher
   );
 

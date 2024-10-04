@@ -15,8 +15,8 @@ function useSignUp() {
     role: string
   ) => {
     const response = await mutate(
-      "https://little-rabbit-67.convex.site/user",
-      fetcher("https://little-rabbit-67.convex.site/user", {
+      "https://different-armadillo-940.convex.site/user",
+      fetcher("https://different-armadillo-940.convex.site/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

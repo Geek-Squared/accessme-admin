@@ -38,7 +38,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
 
     try {
       const response = await fetch(
-        "https://little-rabbit-67.convex.site/site",
+        "https://different-armadillo-940.convex.site/site",
         {
           method: "POST",
           headers: {

@@ -7,9 +7,6 @@ const Table = () => {
   const { visitors, isError, isLoading } = useFetchVisitors();
   const { personnel } = useFetchPersonnel();
   const { siteId } = useParams<{ siteId: string }>();
-
-  console.log('siteId', siteId)
-  console.log('visitors', visitors)
   
   if (isError) console.log(`error: ${isError}`);
   if (isLoading) return <p>Loading...</p>;

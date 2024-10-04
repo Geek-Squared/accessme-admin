@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useFetchPersonnel from "../../hooks/useFetchPersonnel";
 import "./styles.scss";
 import AddPersonnelModal from "../modals/AddPersonnelModal";
@@ -14,7 +14,7 @@ const PersonnelTable = () => {
     return <p>No personnel Available.</p>;
   }
 
-  console.log('personnel', personnel)
+  console.log("personnel", personnel);
 
   const handleAddPersonnel = () => {
     setIsModalOpen(true);
