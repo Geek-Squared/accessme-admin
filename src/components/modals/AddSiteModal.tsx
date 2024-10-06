@@ -73,7 +73,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
         <button className="close-icon" onClick={onClose}>
           &times;
         </button>
-        <h2>Add Site</h2>
+        <h2 className="modal-header">Add Site</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Name:</label>
           <input {...register("name", { required: true })} />

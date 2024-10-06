@@ -94,7 +94,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
         <button className="close-icon" onClick={onClose}>
           &times;
         </button>
-        <h2>Add Personnel</h2>
+        <h2 className="modal-header">Add Personnel</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Name:</label>
           <input {...register("username", { required: true })} />

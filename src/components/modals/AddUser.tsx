@@ -24,8 +24,8 @@ const AddUserModal: FC<IAddUserModal> = ({ isOpen, onClose }) => {
       username: data.username,
       email: data.email,
       role: data.role,
-    //   organizationId: "jx71rxts1ynzd8ns7gahdjn8v571kxat",
-    //   createdBy: "js7e7jwja597avjmq9pjrh6vf571jm5t",
+      //   organizationId: "jx71rxts1ynzd8ns7gahdjn8v571kxat",
+      //   createdBy: "js7e7jwja597avjmq9pjrh6vf571jm5t",
     };
 
     try {
@@ -59,7 +59,7 @@ const AddUserModal: FC<IAddUserModal> = ({ isOpen, onClose }) => {
         <button className="close-icon" onClick={onClose}>
           &times;
         </button>
-        <h2>Add User</h2>
+        <h2 className="modal-header">Add User</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Username:</label>
           <input {...register("username", { required: true })} />
