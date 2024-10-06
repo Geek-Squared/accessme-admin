@@ -4,6 +4,7 @@ import "./styles.scss";
 import useFetchOrganization from "../../hooks/useFetchOrg";
 import useFetchSites from "../../hooks/useFetchSites";
 import useUpdateSite from "../../hooks/useUpdateSite";
+import useUpdateOrganization from "../../hooks/useUpdateOrg";
 
 interface IAddPersonnelModal {
   isOpen: boolean;
@@ -27,6 +28,13 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
   const { organization } = useFetchOrganization();
   const { sites } = useFetchSites();
   const { updateSite } = useUpdateSite();
+  const { updateOrganization } = useUpdateOrganization();
+
+  const filteredSites = sites?.filter(
+    (site: any) => site.organizationId === organization?._id
+  );
+
+  console.log('organizationIdPers', organization);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const personnelData = {
@@ -34,6 +42,8 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
       organizationId: organization?._id,
       role: "personnel",
     };
+
+    console.log("personnelData", personnelData); // Log the payload before sending
 
     try {
       // 1. Create the personnel profile
@@ -50,7 +60,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
 
       // 2. Parse the response
       const responseData = await response.json();
-      console.log("response", responseData);
+      console.log("submittedResponse", responseData);
 
       // 3. Check if response is okay
       if (!response.ok) {
@@ -59,9 +69,14 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
 
       const personnelId = responseData.userId.userId;
       const siteId = data.siteId;
+      console.log("data", data);
 
       await updateSite(siteId, {
-        personnel: [personnelId], // Update site by appending personnel ID
+        personnel: [personnelId],
+      });
+
+      await updateOrganization(organization?._id, {
+        personnel: [personnelId],
       });
 
       // 5. Close the modal after successful submission
@@ -92,9 +107,11 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
           <label>Site:</label>
           <select {...register("siteId", { required: true })}>
             <option value="">Select a site</option>
-            {sites?.map((site: any) => (
+            {filteredSites?.map((site: any) => (
               <option key={site._id} value={site._id}>
-                {site.name} - {site.address.city}
+                {site
+                  ? `${site.name} - ${site.address.city}`
+                  : "No site available"}
               </option>
             ))}
           </select>

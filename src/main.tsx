@@ -15,10 +15,10 @@ import SiteTable from "./components/table/SiteTable.tsx";
 import Sidebar from "./components/nav/Navbar.tsx";
 import PersonnelTable from "./components/table/PersonnelTable.tsx";
 import RegisterOrganization from "./pages/auth/register.tsx";
-import Table from "./components/table/Table.tsx";
 import { AuthProvider } from "./context/authContext.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import UserTable from "./components/table/UsersTable.tsx";
+import VisitorsTable from "./components/table/VisitorsTable.tsx";
 
 const convex = new ConvexReactClient("https://little-rabbit-67.convex.cloud");
 
@@ -30,10 +30,12 @@ const Layout = () => {
     location.pathname === "/register-org";
 
   return (
-    <>
+    <div className="main-layout">
       {!hideSidebar && <Sidebar />}
-      <Outlet />
-    </>
+      <div className="main-content">
+        <Outlet />
+      </div>
+    </div>
   );
 };
 
@@ -55,7 +57,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/sites/visitors-log/:siteId",
-        element: <ProtectedRoute element={<Table />} />,
+        element: <ProtectedRoute element={<VisitorsTable />} />,
       },
       {
         path: "/users",

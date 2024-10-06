@@ -1,20 +1,21 @@
 .table-container {
   border-collapse: collapse;
-  margin: 40px 100px;
-  width: 90%;
+  margin: 40px 50px;
+  width: 95%;
   cursor: pointer;
+  border: 1px solid #dddddd; /* Outer border */
 }
 
 table th,
 table td {
-  border: 1px solid #dddddd;
+  border: none; /* Remove inner borders */
   text-align: left;
   padding: 15px;
   vertical-align: middle;
 }
 
 th {
-  background-color: #f9f9f9;
+  background-color: #FFFFFF;
   font-weight: 600;
   font-size: 14px;
 }
@@ -39,18 +40,14 @@ td img {
   font-weight: bold;
 }
 
-.add-element {
-  margin: 35px;
-  float: right;
-}
-
 /* Additional responsive styling */
 @media (max-width: 768px) {
   .table-container {
     width: 100%;
   }
-  
-  th, td {
+
+  th,
+  td {
     font-size: 12px;
     padding: 10px;
   }

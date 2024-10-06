@@ -1,78 +1,85 @@
-import useFetchVisitors from "../../hooks/useFetchVisitors";
-import useFetchPersonnel from "../../hooks/useFetchPersonnel";
-import { useParams } from "react-router-dom";
+import React from "react";
 import "./styles.scss";
+import Header from "../header/Header";
 
-const Table = () => {
-  const { visitors, isError, isLoading } = useFetchVisitors();
-  const { personnel } = useFetchPersonnel();
-  const { siteId } = useParams<{ siteId: string }>();
-  
-  if (isError) console.log(`error: ${isError}`);
-  if (isLoading) return <p>Loading...</p>;
+interface TableProps {
+  headers: string[];
+  data: any[];
+  renderRow: (item: any) => React.ReactNode;
+  buttonName: string;
+  onButtonClick?: () => void;
+  onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-  if (!Array.isArray(visitors)) {
-    return <p>No visitors available.</p>;
-  }
-
-  // Filter visitors based on siteId
-  const filteredVisitors = visitors?.filter(
-    (visitor: any) => visitor.siteId === siteId
-  );
-
-  const filteredPersonnel = personnel?.filter((person: any) =>
-    filteredVisitors
-      .map((visitor: any) => visitor.security_personnel)
-      .includes(person._id)
-  );
-
-  console.log('filteredPersonnel', filteredPersonnel)
-  // Function to extract time in HH:MM format
-  const formatTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const Table: React.FC<TableProps> = ({
+  headers,
+  data,
+  renderRow,
+  buttonName,
+  onButtonClick,
+  onSearchChange,
+}) => {
+  const renderButtonIcon = () => {
+    if (buttonName === "Add Personnel") {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-6"
+          width="16"
+          height="16"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+          />
+        </svg>
+      );
+    } else if (buttonName === "Add Site") {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-6"
+          width="16"
+          height="16"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+          />
+        </svg>
+      );
+    }
+    return null;
   };
 
   return (
-    <div>
-      {filteredVisitors.length === 0 ? (
-        <p>No log available.</p>
-      ) : (
-        <table className="table-container">
-          <thead>
-            <tr>
-              <th>Visitor</th>
-              <th>Phone Number</th>
-              <th>ID Number</th>
-              <th>Visiting</th>
-              <th>Time In</th>
-              <th>Time Out</th>
-              <th>Personnel On Duty</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredVisitors?.map((visitor: any) => (
-              <tr key={visitor.id}>
-                <td>{visitor?.name}</td>
-                <td>{visitor?.phoneNumber}</td>
-                <td>{visitor?.id_number}</td>
-                <td>{visitor?.visiting_resident}</td>
-                <td>{formatTime(visitor?.entry_time)}</td>
-
-                {visitor?.exit_time ? (
-                  <td>{formatTime(visitor?.exit_time)}</td>
-                ) : (
-                  <td className="td-red">Still on-site</td>
-                )}
-                {filteredPersonnel?.map((personnel: any) => (
-                  <td>{personnel?.username}</td>
-                ))}
-              </tr>
+    <>
+      <Header buttonName={buttonName} onClick={onButtonClick} onSearchChange={onSearchChange} />
+      <table className="table-container">
+        <thead>
+          <tr>
+            {headers?.map((header, index) => (
+              <th key={index}>{header}</th>
             ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map((item, index) => (
+            <tr key={index}>{renderRow(item)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 };
 

@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useFetchOrganization from "../../hooks/useFetchOrg";
 import "./styles.scss";
+import useUpdateOrganization from "../../hooks/useUpdateOrg";
 
 interface IAddSiteModal {
   isOpen: boolean;
@@ -24,6 +25,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
   } = useForm<IFormInput>();
   const { currentUser } = useFetchCurrentUser();
   const { organization } = useFetchOrganization();
+  const { updateOrganization } = useUpdateOrganization();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const siteData = {
@@ -51,8 +53,12 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      const responseData = await response.json();
+      const siteId = responseData?.siteId;
 
-      console.log("Site added successfully:", await response.json());
+      await updateOrganization(organization?._id, {
+        sites: [siteId],
+      });
       onClose();
     } catch (error) {
       console.error("Failed to add Site:", error);

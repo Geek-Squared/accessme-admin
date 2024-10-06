@@ -3,9 +3,12 @@ import useFetchSites from "../../hooks/useFetchSites";
 import AddSiteModal from "../modals/AddSiteModal";
 import { useNavigate } from "react-router-dom";
 import "./styles.scss";
+import useFetchOrganization from "../../hooks/useFetchOrg";
+import Table from "../table/Table";
 
 const SiteTable = () => {
   const { sites, isError, isLoading } = useFetchSites();
+  const { organization } = useFetchOrganization();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -16,7 +19,11 @@ const SiteTable = () => {
     return <p>No Sites Available.</p>;
   }
 
-  console.table(sites);
+  console.log("sitesPersonnl", sites);
+
+  const filteredSites = sites.filter(
+    (site: any) => site.organizationId === organization?._id
+  );
 
   const handleAddSite = () => {
     setIsModalOpen(true);
@@ -31,30 +38,22 @@ const SiteTable = () => {
   };
 
   return (
-    <div>
-      <button className="add-element" onClick={handleAddSite}>
-        Add Site
-      </button>
-      <table className="table-container">
-        <thead>
-          <tr>
-            <th>Site Name</th>
-            <th>Location</th>
-            <th>Personnel On Duty</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sites?.map((site: any) => (
-            <tr key={site._id} onClick={() => handleRowClick(site._id)}>
-              <td>{site?.name}</td>
-              <td>{site?.address.city}</td>
-              <td>Bruce</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <>
+      <Table
+        headers={["Site Name", "Location", "Personnel On Duty"]}
+        data={filteredSites}
+        renderRow={(site) => (
+          <>
+            <td onClick={() => handleRowClick(site._id)}>{site?.name}</td>
+            <td>{site?.address.city}</td>
+            <td>Bruce</td>
+          </>
+        )}
+        buttonName="Add Site"
+        onButtonClick={handleAddSite}
+      />
       <AddSiteModal isOpen={isModalOpen} onClose={handleCloseModal} />
-    </div>
+    </>
   );
 };
 
