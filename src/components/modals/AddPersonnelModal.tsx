@@ -117,7 +117,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
           </select>
           {errors.siteId && <span>This field is required</span>}
 
-          <label>PIN:</label>
+          <label>4 Digit PIN:</label>
           <input
             type="number" // Set the input type to 'number'
             {...register("pin", { required: true, min: 1000, max: 9999 })} // Validate PIN between 1000-9999
