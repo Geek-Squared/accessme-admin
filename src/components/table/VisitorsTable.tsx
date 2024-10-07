@@ -65,6 +65,8 @@ const VisitorsTable = () => {
           </>
         )}
         buttonName="Add Personnel"
+        emptyStateMessage="No visitors available."
+        emptyStateImage="/visitor.svg"
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import "./styles.scss";
 import useFetchOrganization from "../../hooks/useFetchOrg";
@@ -29,12 +29,11 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
   const { sites } = useFetchSites();
   const { updateSite } = useUpdateSite();
   const { updateOrganization } = useUpdateOrganization();
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const filteredSites = sites?.filter(
     (site: any) => site.organizationId === organization?._id
   );
-
-  console.log('organizationIdPers', organization);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const personnelData = {
@@ -43,9 +42,8 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
       role: "personnel",
     };
 
-    console.log("personnelData", personnelData); // Log the payload before sending
-
     try {
+      setIsLoading(true); // Start loading
       // 1. Create the personnel profile
       const response = await fetch(
         "https://different-armadillo-940.convex.site/user-personnel",
@@ -69,7 +67,6 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
 
       const personnelId = responseData.userId.userId;
       const siteId = data.siteId;
-      console.log("data", data);
 
       await updateSite(siteId, {
         personnel: [personnelId],
@@ -83,6 +80,8 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
       onClose();
     } catch (error) {
       console.error("Failed to add personnel:", error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -130,7 +129,9 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
               <span>PIN must be a 4-digit number</span>
             )}
 
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Submit"}
+          </button>
         </form>
       </div>
     </div>

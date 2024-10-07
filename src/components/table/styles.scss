@@ -52,3 +52,29 @@ td img {
     padding: 10px;
   }
 }
+
+.empty-state-container {
+  text-align: center;
+  margin: 200px;
+}
+
+.empty-state-image {
+  width: 150px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.empty-state-message {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.add-site-btn {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

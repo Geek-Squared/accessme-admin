@@ -14,20 +14,20 @@ const PersonnelTable = () => {
   if (isLoading) return <p>Loading...</p>;
 
   if (!Array.isArray(personnel)) {
-    return <p>No personnel Available.</p>;
+    return <p>No personnel available.</p>;
   }
 
   const findMatchingPersonnel = (organization: any, personnel: any) => {
     return organization?.personnel
-      .map((personnelId: string) =>
+      ?.map((personnelId: string) =>
         personnel?.find((person: any) => person?._id === personnelId)
       )
-      .filter(Boolean);
+      .filter(Boolean) || [];
   };
 
   const filteredPersonnel = findMatchingPersonnel(organization, personnel);
 
-  console.log(JSON.stringify(filteredPersonnel, null, 2));
+  console.log("Filtered Personnel:", JSON.stringify(filteredPersonnel, null, 2));
 
   const handleAddPersonnel = () => {
     setIsModalOpen(true);
@@ -44,14 +44,16 @@ const PersonnelTable = () => {
         data={filteredPersonnel}
         renderRow={(person) => (
           <>
-            <td>{person.username}</td>
-            <td>{person.phoneNumber}</td>
+            <td>{person?.username}</td>
+            <td>{person?.phoneNumber}</td>
             <td>On Duty</td>
             <td>Marimba Park</td>
           </>
         )}
         buttonName="Add Personnel"
         onButtonClick={handleAddPersonnel}
+        emptyStateMessage="No personnel available. To add personnel, click the Add Personnel button."
+        emptyStateImage="/personnel.svg"
       />
       <AddPersonnelModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </>

@@ -51,6 +51,8 @@ const SiteTable = () => {
         )}
         buttonName="Add Site"
         onButtonClick={handleAddSite}
+        emptyStateMessage="No site available. To add a site, click the Add Site button."
+        emptyStateImage="/sites.svg"
       />
       <AddSiteModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </>

@@ -9,6 +9,8 @@ interface TableProps {
   buttonName: string;
   onButtonClick?: () => void;
   onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  emptyStateImage?: string; // URL or path to the empty state image
+  emptyStateMessage?: string; // Message to display when no data is available
 }
 
 const Table: React.FC<TableProps> = ({
@@ -18,6 +20,8 @@ const Table: React.FC<TableProps> = ({
   buttonName,
   onButtonClick,
   onSearchChange,
+  emptyStateImage,
+  emptyStateMessage,
 }) => {
   const renderButtonIcon = () => {
     if (buttonName === "Add Personnel") {
@@ -62,23 +66,33 @@ const Table: React.FC<TableProps> = ({
     return null;
   };
 
+  // Explicitly check for empty, null, or undefined data states
+  const isDataEmpty = !data || data.length === 0;
+
   return (
     <>
       <Header buttonName={buttonName} onClick={onButtonClick} onSearchChange={onSearchChange} />
-      <table className="table-container">
-        <thead>
-          <tr>
-            {headers?.map((header, index) => (
-              <th key={index}>{header}</th>
+      {isDataEmpty ? (
+        <div className="empty-state-container">
+          {emptyStateImage && <img src={emptyStateImage} alt="No data available" className="empty-state-image" />}
+          {emptyStateMessage && <p className="empty-state-message">{emptyStateMessage}</p>}
+        </div>
+      ) : (
+        <table className="table-container">
+          <thead>
+            <tr>
+              {headers?.map((header, index) => (
+                <th key={index}>{header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data?.map((item, index) => (
+              <tr key={index}>{renderRow(item)}</tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data?.map((item, index) => (
-            <tr key={index}>{renderRow(item)}</tr>
-          ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      )}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useFetchOrganization from "../../hooks/useFetchOrg";
@@ -26,6 +26,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
   const { currentUser } = useFetchCurrentUser();
   const { organization } = useFetchOrganization();
   const { updateOrganization } = useUpdateOrganization();
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const siteData = {
@@ -39,6 +40,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
     };
 
     try {
+      setIsLoading(true); // Set loading to true when submission starts
       const response = await fetch(
         "https://different-armadillo-940.convex.site/site",
         {
@@ -59,9 +61,12 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
       await updateOrganization(organization?._id, {
         sites: [siteId],
       });
+
       onClose();
     } catch (error) {
       console.error("Failed to add Site:", error);
+    } finally {
+      setIsLoading(false); // Reset loading state when submission completes
     }
   };
 
@@ -87,7 +92,9 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
           <input {...register("city", { required: true })} />
           {errors.city && <span>This field is required</span>}
 
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Submit"}
+          </button>
         </form>
       </div>
     </div>
