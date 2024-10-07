@@ -1,13 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTachometerAlt,
-  faBuilding,
-  faUsers,
-  faUserCircle,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
 import "./styles.scss";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 
