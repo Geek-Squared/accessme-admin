@@ -44,11 +44,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/",
+        path: "/dashboard",
         element: <ProtectedRoute element={<App />} />,
       },
       {
-        path: "/sites",
+        path: "/",
         element: <ProtectedRoute element={<SiteTable />} />,
       },
       {
