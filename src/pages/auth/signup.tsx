@@ -26,7 +26,8 @@ const SignUp = () => {
       formData.password,
       "admin"
     );
-    if (response) navigate("/login");
+    if (response) navigate("/login?from=signup");
+
     console.log(response);
   };
 
@@ -36,18 +37,13 @@ const SignUp = () => {
     <div className="login-container">
       {/* Left Side */}
       <div className="login-left">
-        <div className="balance-widget">
-          <h3>Current Balance</h3>
-          <p>$24,359</p>
-        </div>
-        <div className="transaction-widget">
-          <h4>New Transaction</h4>
-          <p>
-            or upload <span>.xls file</span>
-          </p>
-        </div>
+        <img
+          src="/sign-in.svg"
+          alt="Sign in illustration"
+          className="login-image"
+        />
+        <p className="description-text"></p>
       </div>
-
       {/* Right Side */}
       <div className="login-right">
         <h2>Welcome!</h2>

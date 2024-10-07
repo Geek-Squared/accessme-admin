@@ -17,8 +17,13 @@ interface IFormInput {
   secondaryColor?: string;
 }
 
+const Loader = () => {
+  return <div className="loader"></div>;
+};
+
 const RegisterOrganization: FC = () => {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { currentUser } = useFetchCurrentUser();
   const { updateUser } = useUpdateUser(); // Use the updateUser mutation hook
   const navigate = useNavigate();
@@ -30,6 +35,7 @@ const RegisterOrganization: FC = () => {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data: any) => {
     let logoUrl = "";
+    setIsSubmitting(true);
     if (data.logoUrl && data.logoUrl.length > 0) {
       const file = data.logoUrl[0];
       const reader = new FileReader();
@@ -98,16 +104,15 @@ const RegisterOrganization: FC = () => {
   return (
     <div className="login-container">
       <div className="login-left">
-        <div className="balance-widget">
-          <h3>Current Balance</h3>
-          <p>$24,359</p>
-        </div>
-        <div className="transaction-widget">
-          <h4>New Transaction</h4>
-          <p>
-            or upload <span>.xls file</span>
-          </p>
-        </div>
+        <img
+          src="/sign-in.svg"
+          alt="Sign in illustration"
+          className="login-image"
+        />
+        <p className="description-text">
+          Please log in to your account to manage and control access permissions
+          securely and efficiently.
+        </p>
       </div>
 
       {/* Right Side */}
@@ -184,8 +189,12 @@ const RegisterOrganization: FC = () => {
                 <button type="button" className="login-btn" onClick={prevStep}>
                   Previous
                 </button>
-                <button type="submit" className="login-btn">
-                  Create Organization
+                <button
+                  type="submit"
+                  className="login-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? <Loader /> : "Create Organization"}
                 </button>
               </div>
             </>

@@ -20,7 +20,9 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import UserTable from "./components/table/UsersTable.tsx";
 import VisitorsTable from "./components/table/VisitorsTable.tsx";
 
-const convex = new ConvexReactClient("https://little-rabbit-67.convex.cloud");
+const convex = new ConvexReactClient(
+  "https://different-armadillo-940.convex.cloud"
+);
 
 const Layout = () => {
   const location = useLocation();
