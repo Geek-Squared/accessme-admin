@@ -20,9 +20,7 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import UserTable from "./components/table/UsersTable.tsx";
 import VisitorsTable from "./components/table/VisitorsTable.tsx";
 
-const convex = new ConvexReactClient(
-  "https://different-armadillo-940.convex.cloud"
-);
+const convex = new ConvexReactClient("https://different-armadillo-940.convex.cloud");
 
 const Layout = () => {
   const location = useLocation();
@@ -46,11 +44,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/dashboard",
+        path: "/",
         element: <ProtectedRoute element={<App />} />,
       },
       {
-        path: "/",
+        path: "/sites",
         element: <ProtectedRoute element={<SiteTable />} />,
       },
       {
