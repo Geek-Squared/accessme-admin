@@ -22,7 +22,7 @@ const Sidebar = () => {
           alt="Profile Avatar"
           className="profile-avatar"
         />
-        <p className="profile-name">{currentUser?.username || "Sam Walton"}</p>
+        <p className="profile-name">{currentUser?.username || "Loading User..."}</p>
       </div>
 
       {/* Navigation Sections */}
