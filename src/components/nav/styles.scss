@@ -1,4 +1,3 @@
-/* Sidebar Container */
 .sidebar-container {
   height: 100vh;
   width: 260px;
@@ -14,7 +13,6 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Profile Section */
 .sidebar-profile {
   display: flex;
   flex-direction: column;
@@ -38,7 +36,6 @@
   text-align: center;
 }
 
-/* Sidebar Menu */
 .sidebar-menu {
   width: 100%;
   display: flex;
@@ -62,9 +59,13 @@
   text-align: center;
 }
 
-.sidebar-item:hover {
-  background-color: #f0f0f0;
-}
+// .sidebar-item:hover {
+//   background-color: #f0f0f0;
+//   width: 50%;
+//   height: 25px;
+//   border-top-left-radius: 20px;
+//   border-bottom-left-radius: 20px;
+// }
 
 .nav-link {
   color: #333;
@@ -83,13 +84,11 @@
   margin-left: 12px;
 }
 
-/* Icon Styling */
 .fa-icon {
   font-size: 1rem;
   color: #555;
 }
 
-/* Logout Section at the Bottom */
 .sidebar-footer {
   width: 100%;
   padding: 20px 0;
@@ -102,9 +101,9 @@
   align-items: center;
   cursor: pointer;
   width: 100%;
-  justify-content: center; /* Center logout icon and text horizontally */
+  justify-content: center;
   padding: 10px 0;
-  text-align: center; /* Center text */
+  text-align: center;
 }
 
 .logout-icon:hover {
@@ -113,4 +112,14 @@
 
 .logout-icon span {
   margin-left: 12px;
+}
+
+.active-link {
+  background-color: #e0e0e0;
+  font-weight: bold;
+  padding: 20px;
+  width: 100%;
+  height: 5px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
 }

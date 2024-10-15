@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useFetchUsers from "../../hooks/useFetchUsers";
 import AddUserModal from "../modals/AddUser";
+import Table from "../table/Table";
 import "./styles.scss";
 
 const UserTable = () => {
   const { user, userError, userLoading } = useFetchUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
 
   if (userError) console.log(`error: ${userError}`);
   if (userLoading) return <p>Loading...</p>;
@@ -16,9 +15,7 @@ const UserTable = () => {
     return <p>No Users Available.</p>;
   }
 
-  console.table(user);
-
-  const handleAddSite = () => {
+  const handleAddUser = () => {
     setIsModalOpen(true);
   };
 
@@ -26,33 +23,25 @@ const UserTable = () => {
     setIsModalOpen(false);
   };
 
-  const handleRowClick = (siteId: string) => {
-    navigate(`visitors-log/${siteId}`);
-  };
+  const filteredUserData = user.filter((item) => item.role === "admin");
 
   return (
     <div>
-      <button className="add-element" onClick={handleAddSite}>
-        Add User
-      </button>
-      <table className="table-container">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {user?.map((item: any) => (
-            <tr key={item._id} onClick={() => handleRowClick(item._id)}>
-              <td>{item?.username}</td>
-              <td>{item?.email}</td>
-              <td>{item?.role}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        headers={["Name", "Email", "Role"]}
+        data={filteredUserData}
+        renderRow={(item) => (
+          <>
+            <td>{item?.username}</td>
+            <td>{item?.email}</td>
+            <td>{item?.role}</td>
+          </>
+        )}
+        buttonName="Add User"
+        onButtonClick={handleAddUser}
+        emptyStateMessage="No Users Available."
+        itemsPerPage={20}
+      />
       <AddUserModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );

@@ -8,6 +8,7 @@ const VisitorsTable = () => {
   const { visitors, isError, isLoading } = useFetchVisitors();
   const { personnel } = useFetchPersonnel();
   const { siteId } = useParams<{ siteId: string }>();
+  console.log('visitors', visitors);
 
   if (isError) console.log(`error: ${isError}`);
   if (isLoading) return <p>Loading...</p>;
@@ -28,6 +29,17 @@ const VisitorsTable = () => {
   );
 
   console.log("filteredPersonnel", filteredPersonnel);
+
+  // Function to format Unix timestamp (in milliseconds) to a readable date format
+  const formatDate = (timestamp: number) => {
+    const date = new Date(Math.floor(timestamp)); // Ensure the timestamp is an integer
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   // Function to extract time in HH:MM format
   const formatTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -42,10 +54,12 @@ const VisitorsTable = () => {
           "Phone Number",
           "ID Number",
           "Visiting",
+          "Date",
           "Time In",
           "Time Out",
           "Personnel On Duty",
         ]}
+        isHeader={false}
         data={filteredVisitors}
         renderRow={(visitor) => (
           <>
@@ -53,6 +67,7 @@ const VisitorsTable = () => {
             <td>{visitor?.phoneNumber}</td>
             <td>{visitor?.id_number}</td>
             <td>{visitor?.visiting_resident}</td>
+            <td>{formatDate(visitor?._creationTime)}</td> {/* Format the timestamp */}
             <td>{formatTime(visitor?.entry_time)}</td>
             {visitor?.exit_time ? (
               <td>{formatTime(visitor?.exit_time)}</td>
@@ -67,6 +82,7 @@ const VisitorsTable = () => {
         buttonName="Add Personnel"
         emptyStateMessage="No visitors available."
         emptyStateImage="/visitor.svg"
+        itemsPerPage={20}
       />
     </div>
   );

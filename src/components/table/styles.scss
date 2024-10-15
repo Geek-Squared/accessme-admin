@@ -78,3 +78,98 @@ td img {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.actions-container {
+  position: relative; 
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Position below the icon */
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  z-index: 10;
+  border-radius: 4px;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 8px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: flex-end;  // Align pagination to the far right
+  margin-top: 20px;
+}
+
+.pagination-button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  margin: -25px 10px 5px 7px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: var(--button-bg-color);
+    color: #fff;
+  }
+
+  &:disabled {
+    background-color: #f4f4f4;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background-color: var(--button-bg-color);
+    color: #fff;
+    border-color: var(--button-bg-color);
+  }
+}
+
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 50px 0;
+
+  .empty-state-image {
+    max-width: 250px;
+    margin-bottom: 20px;
+  }
+
+  .empty-state-message {
+    font-size: 18px;
+    color: #666;
+  }
+}
+
+// Actions icon hover
+.actions-container {
+  .action-icon {
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--button-bg-color);
+    }
+  }
+}

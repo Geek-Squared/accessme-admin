@@ -1,13 +1,14 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useFetchOrganization from "../../hooks/useFetchOrg";
-import "./styles.scss";
 import useUpdateOrganization from "../../hooks/useUpdateOrg";
 
 interface IAddSiteModal {
   isOpen: boolean;
   onClose: () => void;
+  siteData?: any; // Optional prop to hold the site data if editing
+  siteId?: string; // Optional prop to determine if it's edit mode
 }
 
 interface IFormInput {
@@ -17,19 +18,23 @@ interface IFormInput {
   city: string;
 }
 
-const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormInput>();
+const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose, siteData, siteId }) => {
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<IFormInput>();
   const { currentUser } = useFetchCurrentUser();
   const { organization } = useFetchOrganization();
   const { updateOrganization } = useUpdateOrganization();
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (siteId && siteData) {
+      setValue("name", siteData.name);
+      setValue("street", siteData.address.street);
+      setValue("city", siteData.address.city);
+    }
+  }, [siteId, siteData, setValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const siteData = {
+    const siteDataToSubmit = {
       name: data.name,
       organizationId: organization?._id,
       createdBy: currentUser?._id,
@@ -40,33 +45,47 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
     };
 
     try {
-      setIsLoading(true); // Set loading to true when submission starts
-      const response = await fetch(
-        "https://different-armadillo-940.convex.site/site",
-        {
+      setIsLoading(true);
+      let response;
+
+      if (siteId) {
+        response = await fetch(`https://different-armadillo-940.convex.site/site?id=${siteId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(siteDataToSubmit),
+        });
+      } else {
+        response = await fetch("https://different-armadillo-940.convex.site/site", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(siteData),
-        }
-      );
+          body: JSON.stringify(siteDataToSubmit),
+        });
+      }
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
       const responseData = await response.json();
-      const siteId = responseData?.siteId;
+      const newSiteId = responseData?.siteId; // Renamed to avoid conflict
+
+      if (!newSiteId) {
+        throw new Error("Failed to get siteId");
+      }
 
       await updateOrganization(organization?._id, {
-        sites: [siteId],
+        sites: [newSiteId],
       });
 
       onClose();
     } catch (error) {
-      console.error("Failed to add Site:", error);
+      console.error("Failed to submit site:", error);
     } finally {
-      setIsLoading(false); // Reset loading state when submission completes
+      setIsLoading(false);
     }
   };
 
@@ -78,7 +97,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
         <button className="close-icon" onClick={onClose}>
           &times;
         </button>
-        <h2 className="modal-header">Add Site</h2>
+        <h2 className="modal-header">{siteId ? "Edit Site" : "Add Site"}</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Name:</label>
           <input {...register("name", { required: true })} />
@@ -93,7 +112,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({ isOpen, onClose }) => {
           {errors.city && <span>This field is required</span>}
 
           <button type="submit" disabled={isLoading}>
-            {isLoading ? "Submitting..." : "Submit"}
+            {isLoading ? "Submitting..." : siteId ? "Save Changes" : "Submit"}
           </button>
         </form>
       </div>

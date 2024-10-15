@@ -1,21 +1,33 @@
+:root {
+  --primary-color: #000;
+  --secondary-color: #fff;
+  --button-bg-color: var(--primary-color);
+  --button-text-color: var(--secondary-color);
+}
+
+
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Inter", system-ui;
-    background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #f8f9fa;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .main-layout {
-    display: flex;
-  }
-  
-  .main-content {
-    margin-left: 240px;
-    padding: 20px;
-    width: calc(100% - 250px);
-  }
-  
-  .main-layout.hide-sidebar .main-content {
-    margin-left: 0;
-    width: 100%;
-  }
+  display: flex;
+}
+
+.main-content {
+  margin-left: 240px;
+  padding: 20px;
+  width: calc(100% - 250px);
+}
+
+.main-layout.hide-sidebar .main-content {
+  margin-left: 0;
+  width: 100%;
+}

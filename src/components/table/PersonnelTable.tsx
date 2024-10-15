@@ -54,6 +54,7 @@ const PersonnelTable = () => {
         onButtonClick={handleAddPersonnel}
         emptyStateMessage="No personnel available. To add personnel, click the Add Personnel button."
         emptyStateImage="/personnel.svg"
+        itemsPerPage={20}
       />
       <AddPersonnelModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </>

@@ -73,7 +73,7 @@ const AddUserModal: FC<IAddUserModal> = ({ isOpen, onClose }) => {
           <select {...register("role", { required: true })}>
             <option value="">Select role</option>
             <option value="admin">Admin</option>
-            <option value="personnel">Personnel</option>
+            <option value="personnel">User</option>
           </select>
           {errors.role && <span>This field is required</span>}
 

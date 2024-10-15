@@ -91,7 +91,7 @@ select {
 
 button[type="submit"] {
   padding: 10px 15px;
-  background-color: #007bff;
+  background-color: var(--button-bg-color);
   color: white;
   border: none;
   border-radius: 8px;

@@ -19,6 +19,7 @@ import { AuthProvider } from "./context/authContext.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import UserTable from "./components/table/UsersTable.tsx";
 import VisitorsTable from "./components/table/VisitorsTable.tsx";
+import Profile from "./pages/profile.tsx";
 
 const convex = new ConvexReactClient("https://different-armadillo-940.convex.cloud");
 
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/sign-up",
         element: <Register />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
       {
         path: "/login",
