@@ -2,6 +2,7 @@ import useSWR from "swr";
 
 function useFetchPersonnel() {
   const fetcher = (...args: any[]) =>
+  //@ts-expect-error  
     fetch(...args)
       .then((res) => res.json())
       .then((data) => {
@@ -16,6 +17,7 @@ function useFetchPersonnel() {
   const { data, error, isLoading } = useSWR(
     `https://different-armadillo-940.convex.site/user-personnel`,
     fetcher,
+    //@ts-expect-error
     { initialData }
   );
 
