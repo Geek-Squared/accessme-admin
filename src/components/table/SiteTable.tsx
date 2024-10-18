@@ -151,7 +151,7 @@ const SiteTable = () => {
         onButtonClick={handleAddSite}
         emptyStateMessage="No site available. To add a site, click the Add Site button."
         emptyStateImage="/sites.svg"
-        itemsPerPage={20}
+        itemsPerPage={10}
       />
 
       <AddSiteModal
