@@ -1,50 +1,41 @@
-# React + TypeScript + Vite
+# AcSys Management System - Admin Panel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-18.0-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The **Security Management System** is a React-based web application for administrators to manage building access security. It allows admins to oversee who has access to their buildings, revoke or grant permissions, monitor access logs, and view real-time reports of building entries.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **User Access Management**: View, grant, and revoke access to buildings.
+- **Real-time Entry Logs**: Track building entries and monitor activity.
+- **Role-Based Access Control (RBAC)**: Admins can manage user roles and permissions.
+- **Audit Logs**: Detailed records of all security-related actions.
+- **Dashboard Analytics**: Visual reports of access events and user statistics.
+- **Notifications**: Real-time alerts on unauthorized access attempts.
 
-- Configure the top-level `parserOptions` property like this:
+## Tech Stack
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Frontend**: [React.js](https://reactjs.org/) (JavaScript framework)
+  - **React Router**: For navigation and routing.
+  - **Axios**: For making HTTP requests.
+  - **Redux**: For state management.
+  - **SCSS**: For UI components and styling.
+- **Backend**: This app communicates with a backend API (Convex Server).
+- **Authentication**: Token-based authentication (JWT or similar).
+- **Hosting**: The application can be hosted on platforms like Vercel.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Screenshots
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+<img width="1508" alt="Screenshot 2024-10-24 at 14 10 19" src="https://github.com/user-attachments/assets/fcd048c1-e2be-4a04-91d3-bf6263796932">
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Installation
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/) (v14.x or higher)
+- npm or yarn (package managers)
+
+
+
