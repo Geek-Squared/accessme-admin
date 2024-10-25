@@ -18,7 +18,7 @@ const Sidebar = () => {
       {/* Profile Section */}
       <div className="sidebar-profile">
         <img
-          src="https://scontent.cdninstagram.com/v/t51.2885-19/116877940_328182174987258_7694539385758629643_n.jpg?stp=dst-jpg_s160x160&_nc_cat=102&ccb=1-7&_nc_sid=bf7eb4&_nc_ohc=22GFVw3eQ-MQ7kNvgE-RZ_H&_nc_ht=scontent.cdninstagram.com&oh=00_AYDmK14T-NsT3Bg2EGL4RlzvAezpDQ4nQb8ikMJOzCTVYQ&oe=671296D1"
+          src="/anmo.png"
           alt="Profile Avatar"
           className="profile-avatar"
         />

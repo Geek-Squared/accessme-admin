@@ -8,7 +8,7 @@ const useOrgStyles = () => {
     if (organization) {
       document.documentElement.style.setProperty(
         "--primary-color",
-        organization.primaryColor || "#000"
+        organization.primaryColor 
       );
       document.documentElement.style.setProperty(
         "--secondary-color",
@@ -16,7 +16,7 @@ const useOrgStyles = () => {
       );
       document.documentElement.style.setProperty(
         "--button-bg-color",
-        organization.primaryColor || "#000"
+        organization.primaryColor 
       );
       document.documentElement.style.setProperty(
         "--button-text-color",

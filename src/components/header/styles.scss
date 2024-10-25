@@ -47,3 +47,56 @@
   cursor: pointer;
   margin-right: 30px;
 }
+
+/* Style for right controls */
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between elements */
+}
+
+/* Visitors-specific controls for date filters and download */
+.visitors-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;  /* Space between elements */
+}
+
+/* Date filter specific styles */
+.date-filter {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.date-filter input {
+  margin-right: 20px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.download-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.download-button:hover {
+  background-color: #0056b3;
+}
+
+.download-button svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.5;
+}

@@ -88,6 +88,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <ConvexProvider client={convex}>
+       
         <RouterProvider router={router} />
       </ConvexProvider>
     </AuthProvider>
