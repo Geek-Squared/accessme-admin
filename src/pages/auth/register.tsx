@@ -4,15 +4,16 @@ import { useNavigate } from "react-router-dom";
 import "./styles.scss";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useUpdateUser from "../../hooks/useUpdateUser"; // Import the mutation hook
+import { apiUrl } from "../../utils/apiUrl";
 
 interface IFormInput {
   name: string;
   addressLineOne: string;
   addressLineTwo?: string;
-  postalCode?: number;
+  postalCode?: string;
   city: string;
   country: string;
-  logoUrl?: FileList;
+  logoUrl?: FileList | string;
   primaryColor?: string;
   secondaryColor?: string;
 }
@@ -24,59 +25,90 @@ const Loader = () => {
 const RegisterOrganization: FC = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { currentUser } = useFetchCurrentUser();
-  const { updateUser } = useUpdateUser(); // Use the updateUser mutation hook
+  const { user } = useFetchCurrentUser();
+  const { updateUser } = useUpdateUser();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<IFormInput>();
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data: any) => {
-    let logoUrl = "";
+  const uploadFile = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${apiUrl}/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload file");
+    }
+
+    const data = await response.json();
+    return data.url; // Assuming the API returns { url: "https://your-url.com/image.png" }
+  };
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setIsSubmitting(true);
-    if (data.logoUrl && data.logoUrl.length > 0) {
-      const file = data.logoUrl[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        logoUrl = reader.result as string;
-        await submitData({ ...data, logoUrl });
-      };
-    } else {
-      await submitData(data);
+    try {
+      let logoUrl = "";
+
+      if (data.logoUrl && data.logoUrl.length > 0) {
+        const file = data?.logoUrl[0];
+        //@ts-expect-error
+        logoUrl = await uploadFile(file);
+      }
+
+      await submitData({ ...data, logoUrl });
+    } catch (error) {
+      console.error("Error uploading logo:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleColorChange =
+    (field: "primaryColor" | "secondaryColor") =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(field, e.target.value); // Update the form value
+    };
 
   // Submit organization data to the API and update user organizationId
   const submitData = async (data: IFormInput & { logoUrl?: string }) => {
     const organizationData = {
       name: data.name,
-      logoUrl: data.logoUrl,
+      // logoUrl: data.logoUrl,
       primaryColor: data.primaryColor,
       secondaryColor: data.secondaryColor,
-      createdBy: currentUser._id,
-      address: {
-        addressLineOne: data.addressLineOne,
-        addressLineTwo: data.addressLineTwo,
-        postalCode: data.postalCode,
-        city: data.city,
-        country: data.country,
-      },
+      createdBy: user.id,
+      addressLineOne: data.addressLineOne,
+      addressLineTwo: data.addressLineTwo,
+      postalCode: data.postalCode,
+      city: data.city,
+      country: data.country,
+      users: [user.id],
     };
 
     try {
-      const response = await fetch(
-        "https://different-armadillo-940.convex.site/organization",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(organizationData),
-        }
-      );
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${apiUrl}/organization`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(organizationData),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to create organization");
@@ -87,8 +119,8 @@ const RegisterOrganization: FC = () => {
       // console.log("Organization created successfully:", organizationId);
 
       // // Update the current user with the organizationId
-      await updateUser(currentUser._id, {
-        organizationId: organizationId?.orgId,
+      await updateUser(user.id, {
+        organizationId: organizationId?.id,
       });
 
       // Navigate to the home page after successful update
@@ -146,9 +178,8 @@ const RegisterOrganization: FC = () => {
               <div className="input-group">
                 <label>Postal Code:</label>
                 <input
-                  type="number"
                   {...register("postalCode", {
-                    valueAsNumber: true,
+                    required: "Postal Code is required",
                   })}
                 />
               </div>
@@ -179,11 +210,20 @@ const RegisterOrganization: FC = () => {
               </div>
               <div className="input-group">
                 <label>Primary Color:</label>
-                <input type="color" {...register("primaryColor")} />
+                <input
+                  type="color"
+        
+                  {...register("primaryColor")}
+                  onChange={handleColorChange("primaryColor")}
+                />
               </div>
               <div className="input-group">
                 <label>Secondary Color:</label>
-                <input type="color" {...register("secondaryColor")} />
+                <input
+                  type="color"
+                  {...register("secondaryColor")}
+                  onChange={handleColorChange("secondaryColor")}
+                />
               </div>
               <div className="multistep-buttons">
                 <button type="button" className="login-btn" onClick={prevStep}>

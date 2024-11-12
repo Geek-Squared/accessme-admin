@@ -4,7 +4,7 @@ import "./styles.scss";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 
 const Sidebar = () => {
-  const { currentUser } = useFetchCurrentUser();
+  const { user } = useFetchCurrentUser();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -12,18 +12,14 @@ const Sidebar = () => {
     logout();
     navigate("/login");
   };
- 
+
   return (
     <div className="sidebar-container">
       {/* Profile Section */}
       <div className="sidebar-profile">
-        <img
-          src="/anmo.png"
-          alt="Profile Avatar"
-          className="profile-avatar"
-        />
+        <img src="/anmo.png" alt="Profile Avatar" className="profile-avatar" />
         <p className="profile-name">
-          {currentUser?.username || "Loading User..."}
+          {`${user?.firstName} ${user?.lastName} ` || "Loading User..."}
         </p>
       </div>
 

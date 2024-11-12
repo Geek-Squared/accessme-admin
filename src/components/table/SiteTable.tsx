@@ -21,6 +21,8 @@ const SiteTable = () => {
   // const [searchTerm, setSearchTerm] = useState(""); // Track search term
   const navigate = useNavigate();
 
+  console.log('organization', organization)
+
   useEffect(() => {
     if (fetchedSites) {
       setSites(fetchedSites);

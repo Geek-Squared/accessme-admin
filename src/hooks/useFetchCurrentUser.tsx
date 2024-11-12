@@ -1,43 +1,35 @@
 import useSWR from "swr";
+import { apiUrl } from "../utils/apiUrl";
 
 function useFetchCurrentUser() {
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("id");
 
-  const fetcher = (url: string) =>
-    fetch(url, {
+  // Define the fetcher function for SWR with authentication headers
+  const fetcher = async (url: any) => {
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch user data");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        localStorage.setItem("currentUser", JSON.stringify(data));
-        return data;
-      });
+    });
 
-  const initialData = localStorage.getItem("currentUser")
-    ? JSON.parse(localStorage.getItem("currentUser")!)
-    : null;
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    return response.json();
+  };
 
+  // useSWR only fetches if `token` is available
   const { data, error, isLoading } = useSWR(
-    token
-      ? `https://different-armadillo-940.convex.site/currentUser?id=${userId}`
-      : null,
-    fetcher,
-    //@ts-expect-error
-    { initialData }
+    token ? `${apiUrl}/user/me` : null,
+    fetcher
   );
 
+  console.log("data", data);
+
   return {
-    currentUser: data,
+    user: data,
     loading: isLoading,
     error,
   };

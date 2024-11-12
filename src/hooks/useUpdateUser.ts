@@ -1,4 +1,5 @@
 import useSWR, { mutate } from "swr";
+import { apiUrl } from "../utils/apiUrl";
 
 // Basic fetcher function that takes URL and options
 const fetcher = (url: string, options: any) =>
@@ -15,9 +16,9 @@ function useUpdateUser() {
     try {
       // Use mutate with the fetcher for PATCH request
       const updatedData = await mutate(
-        `https://different-armadillo-940.convex.site/user?userId=${userId}`,
-        fetcher(`https://different-armadillo-940.convex.site/user?userId=${userId}`, {
-          method: "PATCH",
+        `${apiUrl}/user/${userId}`,
+        fetcher(`${apiUrl}/user/${userId}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },

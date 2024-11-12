@@ -9,19 +9,20 @@ function useSignUp() {
   });
 
   const signup = async (
-    username: string,
+    firstName: string,
+    lastName: string,
     email: string,
     password: string,
     role: string
   ) => {
     const response = await mutate(
-      "https://different-armadillo-940.convex.site/user",
-      fetcher("https://different-armadillo-940.convex.site/user", {
+      "http://localhost:8080/auth/signup",
+      fetcher("http://localhost:8080/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, email, password, role }),
+        body: JSON.stringify({ firstName, lastName, email, password, role }),
       }),
       false
     );

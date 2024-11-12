@@ -1,4 +1,5 @@
 import useSWR, { mutate } from "swr";
+import { apiUrl } from "../utils/apiUrl";
 
 const fetcher = (url: string, options: any) =>
   fetch(url, options).then((res) => res.json());
@@ -10,13 +11,13 @@ function useLogin() {
 
   const login = async (email: string, password: string) => {
     const response = await mutate(
-      "https://different-armadillo-940.convex.site/auth/admin",
-      fetcher("https://different-armadillo-940.convex.site/auth/admin", {
+      `${apiUrl}/auth/signin`,
+      fetcher(`${apiUrl}/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role: "ADMIN" }),
       }),
       false
     );

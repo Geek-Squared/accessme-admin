@@ -17,14 +17,15 @@ const SignUp = () => {
   const onSubmit = async (formData: {
     email: string;
     password: string;
-    username: string;
-    role: string;
+    firstName: string;
+    lastName: string;
   }) => {
     const response = await signup(
-      formData.username,
+      formData.firstName,
+      formData.lastName,
       formData.email,
       formData.password,
-      "admin"
+      "ADMIN"
     );
     if (response) navigate("/login?from=signup");
 
@@ -49,19 +50,35 @@ const SignUp = () => {
         <h2>Welcome!</h2>
         {/* @ts-ignore */}
         <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-          {/* Username Field */}
+          {/* firstName Field */}
           <div className="input-group">
-            <label htmlFor="username">Full Name</label>
+            <label htmlFor="firstName">Full Name</label>
             <input
               type="text"
-              id="username"
+              id="firstName"
               placeholder="John Doe"
-              {...register("username", { required: "Username is required" })}
+              {...register("firstName", { required: "firstName is required" })}
             />
-            {errors.username && (
+            {errors.firstName && (
               <span className="error">
-                {typeof errors.username?.message === "string"
-                  ? errors.username.message
+                {typeof errors.firstName?.message === "string"
+                  ? errors.firstName.message
+                  : null}
+              </span>
+            )}
+          </div>
+          <div className="input-group">
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              placeholder="John Doe"
+              {...register("lastName", { required: "lastName is required" })}
+            />
+            {errors.lastName && (
+              <span className="error">
+                {typeof errors.lastName?.message === "string"
+                  ? errors.lastName.message
                   : null}
               </span>
             )}
