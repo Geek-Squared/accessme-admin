@@ -1,44 +1,58 @@
+// hooks/useEditSite.js
 import useSWR, { mutate } from "swr";
+import axios from "axios";
+import { apiUrl } from "../utils/apiUrl";
 
-// Basic fetcher function that takes URL and options
-const fetcher = (url: string, options: any) =>
-  fetch(url, options).then((res) => res.json());
+const useEditSite = (siteId: any) => {
+  const { data, error } = useSWR(
+    siteId ? `${apiUrl}/site/${siteId}` : null,
+    fetcher
+  );
 
-// Custom hook for updating a user
-function useUpdateSite() {
-  // Using SWR to fetch user data
-  //@ts-ignore
-  const { data, error, isLoading } = useSWR("/site", fetcher);
+  // Fetcher function for SWR
+  async function fetcher(url: any) {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  }
 
-  // Function to update the user data
-  const updateSite = async (siteId: string, fieldsToUpdate: any) => {
+  // Update site function
+  const updateSite = async (updatedData: any) => {
     try {
-      const updatedData = await mutate(
-        `https://different-armadillo-940.convex.site/site?id=${siteId}`,
-        fetcher(`https://different-armadillo-940.convex.site/site?id=${siteId}`, {
-          method: "PATCH",
+      // Perform the PUT request to update site data
+      const response = await axios.put(
+        `${apiUrl}/site/${siteId}`,
+        updatedData,
+        {
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(fieldsToUpdate),
-        }),
-        false
+        }
       );
 
-      console.log("response from update", updatedData);
-      return updatedData;
+      // Optimistically update SWR cache for the site
+      mutate(`${apiUrl}/site/${siteId}`, { ...data, ...updatedData }, false);
+
+      // Revalidate to refresh SWR cache with fresh data
+      await mutate(`${apiUrl}/site/${siteId}`);
+
+      return response.data;
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("Failed to update site:", error);
       throw error;
     }
   };
 
   return {
-    updateSite,
-    data,
-    isLoading,
+    site: data,
+    isLoading: !error && !data,
     isError: error,
+    updateSite,
   };
-}
+};
 
-export default useUpdateSite;
+export default useEditSite;

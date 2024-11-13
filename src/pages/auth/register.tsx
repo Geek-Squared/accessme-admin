@@ -25,6 +25,8 @@ const Loader = () => {
 const RegisterOrganization: FC = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [primaryColor, setPrimaryColor] = useState();
+  const [secondaryColor, setSecondaryColor] = useState();
   const { user } = useFetchCurrentUser();
   const { updateUser } = useUpdateUser();
   const navigate = useNavigate();
@@ -38,33 +40,45 @@ const RegisterOrganization: FC = () => {
   const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
-
+  
     const token = localStorage.getItem("token");
-
-    const response = await fetch(`${apiUrl}/upload`, {
+  
+    const response = await fetch(`${apiUrl}/organization/upload`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
-
+  
     if (!response.ok) {
       throw new Error("Failed to upload file");
     }
-
-    const data = await response.json();
-    return data.url; // Assuming the API returns { url: "https://your-url.com/image.png" }
+  
+    // Check if the response is JSON, otherwise assume it's a plain URL
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      return data.url;
+    } else {
+      // If response is plain text, use it directly as the URL
+      const textData = await response.text();
+      return textData;
+    }
   };
+  
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setIsSubmitting(true);
     try {
       let logoUrl = "";
 
-      if (data.logoUrl && data.logoUrl.length > 0) {
-        const file = data?.logoUrl[0];
-        //@ts-expect-error
+      if (
+        data.logoUrl &&
+        data.logoUrl instanceof FileList &&
+        data.logoUrl.length > 0
+      ) {
+        const file = data.logoUrl[0];
         logoUrl = await uploadFile(file);
       }
 
@@ -76,18 +90,20 @@ const RegisterOrganization: FC = () => {
     }
   };
 
-  const handleColorChange =
-    (field: "primaryColor" | "secondaryColor") =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(field, e.target.value); // Update the form value
-    };
+  const handlePrimaryColorChange = (e: any) => {
+    setPrimaryColor(e.target.value);
+  };
+  const handleSecondaryColorChange = (e: any) => {
+    setSecondaryColor(e.target.value);
+  };
+  console.log("primaryColor", typeof primaryColor, secondaryColor);
 
   // Submit organization data to the API and update user organizationId
   const submitData = async (data: IFormInput & { logoUrl?: string }) => {
     const organizationData = {
       name: data.name,
-      // logoUrl: data.logoUrl,
-      primaryColor: data.primaryColor,
+      logoUrl: data.logoUrl,
+      primaryColor: primaryColor,
       secondaryColor: data.secondaryColor,
       createdBy: user.id,
       addressLineOne: data.addressLineOne,
@@ -212,18 +228,19 @@ const RegisterOrganization: FC = () => {
                 <label>Primary Color:</label>
                 <input
                   type="color"
-        
                   {...register("primaryColor")}
-                  onChange={handleColorChange("primaryColor")}
+                  onChange={handlePrimaryColorChange}
                 />
+                <span>You have selected {primaryColor}</span>
               </div>
               <div className="input-group">
                 <label>Secondary Color:</label>
                 <input
                   type="color"
                   {...register("secondaryColor")}
-                  onChange={handleColorChange("secondaryColor")}
+                  onChange={handleSecondaryColorChange}
                 />
+                <span>You have selected {primaryColor}</span>
               </div>
               <div className="multistep-buttons">
                 <button type="button" className="login-btn" onClick={prevStep}>

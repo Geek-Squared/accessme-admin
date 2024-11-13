@@ -17,17 +17,21 @@ const fetcher = (...args: [RequestInfo, RequestInit?]) => {
   });
 };
 
-function useFetchOrganization() {
-  const { data, error, isLoading } = useSWR(`${apiUrl}/organization`, fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 60000,
-  });
+function useFetchSiteById(siteId: any) {
+  const { data, error, isLoading } = useSWR(
+    `${apiUrl}/site/${siteId}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
 
   return {
-    org: data,
+    siteById: data,
     isLoading,
     isError: !!error,
   };
 }
 
-export default useFetchOrganization;
+export default useFetchSiteById;

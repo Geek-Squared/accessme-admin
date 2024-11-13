@@ -2,10 +2,13 @@ import { FC, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useFetchOrganization from "../../hooks/useFetchOrg";
-import useUpdateOrganization from "../../hooks/useUpdateOrg";
+import useCreateSite from "../../hooks/useCreateSite";
 import { mutate } from "swr";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useEditSite from "../../hooks/useUpdateSite";
+import { apiUrl } from "../../utils/apiUrl";
+import useFetchSiteById from "../../hooks/useFetchSiteById";
 
 interface IAddSiteModal {
   isOpen: boolean;
@@ -16,9 +19,13 @@ interface IAddSiteModal {
 
 interface IFormInput {
   name: string;
-  createdBy: string;
-  street: string;
+  addressLineOne: string;
+  addressLineTwo: string;
   city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  personnel: any;
 }
 
 const AddSiteModal: FC<IAddSiteModal> = ({
@@ -34,76 +41,53 @@ const AddSiteModal: FC<IAddSiteModal> = ({
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>();
 
-  const { currentUser } = useFetchCurrentUser();
-  const { organization } = useFetchOrganization();
-  const { updateOrganization } = useUpdateOrganization();
+  const { user } = useFetchCurrentUser();
+  const { org } = useFetchOrganization();
+  const { createSite } = useCreateSite();
+  const { updateSite } = useEditSite(siteId);
+  const {siteById} = useFetchSiteById(siteId);
 
+
+  // Pre-fill form data if editing an existing site
   useEffect(() => {
     if (siteId && siteData) {
       setValue("name", siteData.name);
-      setValue("street", siteData.address.street);
-      setValue("city", siteData.address.city);
+      setValue("addressLineOne", siteData.addressLineOne);
+      setValue("addressLineTwo", siteData.addressLineTwo);
+      setValue("city", siteData.city);
+      setValue("state", siteData.state);
+      setValue("postalCode", siteData.postalCode);
+      setValue("country", siteData.country);
+      setValue("personnel", siteData.personnel);
     }
   }, [siteId, siteData, setValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const siteDataToSubmit = {
       name: data.name,
-      organizationId: organization?._id,
-      createdBy: currentUser?._id,
-      address: {
-        street: data.street,
-        city: data.city,
-      },
+      organizationId: org[0].id,
+      addressLineOne: data.addressLineOne,
+      addressLineTwo: data.addressLineTwo,
+      city: data.city,
+      state: data.state,
+      postalCode: data.postalCode,
+      country: data.country,
+      personnel: data.personnel,
+      slug: data.name,
     };
 
     try {
       let response;
-
       if (siteId) {
-        response = await fetch(
-          `https://different-armadillo-940.convex.site/site?id=${siteId}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(siteDataToSubmit),
-          }
-        );
+        response = await updateSite(siteDataToSubmit);
+        toast.success("Site Updated Successfully!");
       } else {
-        response = await fetch(
-          "https://different-armadillo-940.convex.site/site",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(siteDataToSubmit),
-          }
-        );
-      }
-
-      if (response.ok) {
+        response = await createSite(siteDataToSubmit);
         toast.success("Site Created Successfully!");
-      } else {
-        throw new Error("Network response was not ok");
       }
 
-      const responseData = await response.json();
-      const newSiteId = responseData?.siteId;
-
-      if (!newSiteId) {
-        throw new Error("Failed to get siteId");
-      }
-
-      await updateOrganization(organization?._id, {
-        sites: [newSiteId],
-      });
-
-      // Trigger revalidation of SWR data for organization and current user
-      mutate("https://different-armadillo-940.convex.site/organization");
-      mutate("https://different-armadillo-940.convex.site/currentUser");
+      mutate(`${apiUrl}/organization`);
+      mutate(`${apiUrl}/currentUser`);
 
       onClose();
     } catch (error) {
@@ -127,13 +111,28 @@ const AddSiteModal: FC<IAddSiteModal> = ({
             <input {...register("name", { required: true })} />
             {errors.name && <span>This field is required</span>}
 
-            <label>Street:</label>
-            <input {...register("street", { required: true })} />
-            {errors.street && <span>This field is required</span>}
+            <label>Address Line One:</label>
+            <input {...register("addressLineOne", { required: true })} />
+            {errors.addressLineOne && <span>This field is required</span>}
+
+            <label>Address Line Two:</label>
+            <input {...register("addressLineTwo")} />
 
             <label>City:</label>
             <input {...register("city", { required: true })} />
             {errors.city && <span>This field is required</span>}
+
+            <label>Province or State:</label>
+            <input {...register("state", { required: true })} />
+            {errors.state && <span>This field is required</span>}
+
+            <label>Postal Code:</label>
+            <input {...register("postalCode", { required: true })} />
+            {errors.postalCode && <span>This field is required</span>}
+
+            <label>Country:</label>
+            <input {...register("country", { required: true })} />
+            {errors.country && <span>This field is required</span>}
 
             <button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}

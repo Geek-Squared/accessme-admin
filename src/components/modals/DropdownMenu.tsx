@@ -8,13 +8,22 @@ interface DropdownMenuProps {
   onClose: () => void;
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ isOpen, itemId, onEdit, onDelete, onClose }) => {
+const DropdownMenu: React.FC<DropdownMenuProps> = ({
+  isOpen,
+  itemId,
+  onEdit,
+  onDelete,
+  onClose,
+}) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onClose(); // Close the dropdown if clicked outside
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        onClose();
       }
     };
 

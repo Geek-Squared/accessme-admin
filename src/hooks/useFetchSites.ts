@@ -1,11 +1,26 @@
 import useSWR from "swr";
+import { apiUrl } from "../utils/apiUrl";
 
-//@ts-expect-error
-const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json());
+const fetcher = (...args: [RequestInfo, RequestInit?]) => {
+  const token = localStorage.getItem("token");
+
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  };
+
+  return fetch(args[0], { ...options, ...args[1] }).then((res) => {
+    if (!res.ok) throw new Error("Network response was not ok");
+    return res.json();
+  });
+};
+
 
 function useFetchSites() {
   const { data, error, isLoading } = useSWR(
-    `https://different-armadillo-940.convex.site/site`,
+    `${apiUrl}/site`,
     fetcher,
     {
       revalidateOnFocus: false, // Disable revalidation on focus

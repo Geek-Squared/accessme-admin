@@ -4,7 +4,7 @@ import "./styles.scss";
 interface ConfirmationModalProps {
   isOpen: boolean;
   message: string;
-  onConfirm: () => void;
+  onConfirm: any;
   onCancel: () => void;
 }
 
