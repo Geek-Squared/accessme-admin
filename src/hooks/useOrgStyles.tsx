@@ -2,28 +2,28 @@ import { useEffect } from "react";
 import useFetchOrganization from "./useFetchOrg";
 
 const useOrgStyles = () => {
-  const { organization } = useFetchOrganization();
-
+  const { org } = useFetchOrganization();
+console.log('org', org)
   useEffect(() => {
-    if (organization) {
+    if (org) {
       document.documentElement.style.setProperty(
         "--primary-color",
-        organization.primaryColor 
+        org[0].primaryColor
       );
       document.documentElement.style.setProperty(
         "--secondary-color",
-        organization.secondaryColor || "#fff"
+        org[0].secondaryColor || "#fff"
       );
       document.documentElement.style.setProperty(
         "--button-bg-color",
-        organization.primaryColor 
+        org[0].primaryColor
       );
       document.documentElement.style.setProperty(
         "--button-text-color",
-        organization.secondaryColor || "#fff"
+        org[0].secondaryColor || "#fff"
       );
     }
-  }, [organization]);
+  }, [org]);
 };
 
 export default useOrgStyles;
