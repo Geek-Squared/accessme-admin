@@ -12,7 +12,7 @@ const Profile = () => {
     availableChange: "25/04/2024",
   });
 
-  const { currentUser } = useFetchCurrentUser();
+  const { user } = useFetchCurrentUser();
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -34,12 +34,12 @@ const Profile = () => {
           <input
             type="text"
             name="name"
-            value={currentUser.username}
+            value={user.firstName}
             onChange={handleInputChange}
             disabled
           />
           <label>Email</label>
-          <input type="email" name="email" value={currentUser.email} disabled />
+          <input type="email" name="email" value={user.email} disabled />
           <button className="save-btn">Save Changes</button>
         </div>
       </div>

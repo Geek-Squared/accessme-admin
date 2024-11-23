@@ -4,47 +4,102 @@ import "./styles.scss";
 import AddPersonnelModal from "../modals/AddPersonnelModal";
 import useFetchOrganization from "../../hooks/useFetchOrg";
 import Table from "../table/Table";
+import useFetchUsers from "../../hooks/useFetchUsers";
+import DropdownMenu from "../modals/DropdownMenu";
 
 const PersonnelTable = () => {
   const { personnel, isError, isLoading } = useFetchPersonnel();
-  const { organization } = useFetchOrganization();
+  const { org } = useFetchOrganization();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState<string | null>(null);
 
+  const { users } = useFetchUsers();
+
+  console.log("users", users);
   if (isError) console.log(`error: ${isError}`);
   if (isLoading) return <p>Loading...</p>;
-
   if (!Array.isArray(personnel)) {
     return <p>No personnel available.</p>;
   }
 
-  const findMatchingPersonnel = (organization: any, personnel: any) => {
-    return organization?.personnel
-      ?.map((personnelId: string) =>
-        personnel?.find((person: any) => person?._id === personnelId)
-      )
-      .filter(Boolean) || [];
+  const findMatchingPersonnel = (organizations: any[]) => {
+    return organizations.flatMap(
+      (org: any) =>
+        org.users?.filter((user: any) => user.role === "PERSONNEL") || []
+    );
   };
 
-  const filteredPersonnel = findMatchingPersonnel(organization, personnel);
+  const filteredPersonnel = users?.filter(
+    (user: any) => user.role === "PERSONNEL"
+  );
 
-  console.log("Filtered Personnel:", JSON.stringify(filteredPersonnel, null, 2));
+  console.log("Filtered Personnel:", org);
 
   const handleAddPersonnel = () => {
     setIsModalOpen(true);
   };
+  const toggleDropdown = (siteId: string) => {
+    setDropdownVisible((prev) => (prev === siteId ? null : siteId));
+  };
+  
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
+  const confirmDelete = (siteId: string) => {
+    // setSiteIdToDelete(siteId);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+   console
+  };
+  const renderIcons = (site: any) => [
+    <div className="actions-container" key={site.id}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="size-6 action-icon"
+        width="25"
+        height="25"
+        onClick={() => toggleDropdown(site.id)}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+
+      <DropdownMenu
+        key={`dropdown-${site.id}`}
+        isOpen={dropdownVisible === site.id}
+        itemId={site.id}
+        onEdit={() => console.log(site.id)}
+        onDelete={() => confirmDelete(site.id)}
+        onClose={() => setDropdownVisible(null)}
+      />
+    </div>,
+  ];
+
+
   return (
     <>
       <Table
-        headers={["Name", "Phone Number", "Status", "Current Site Location"]}
+        headers={["Name", "Phone Number", "Status", "Current Site Location", "Actions"]}
         data={filteredPersonnel}
+        renderIcons={renderIcons}
         renderRow={(person) => (
           <>
-            <td>{person?.username}</td>
+            <td>
+              {person?.firstName}
+              {person?.lastName}
+            </td>
             <td>{person?.phoneNumber}</td>
             <td>On Duty</td>
             <td>Marimba Park</td>

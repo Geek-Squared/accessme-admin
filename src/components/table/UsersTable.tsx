@@ -5,13 +5,13 @@ import Table from "../table/Table";
 import "./styles.scss";
 
 const UserTable = () => {
-  const { user, userError, userLoading } = useFetchUsers();
+  const { users, userError, userLoading } = useFetchUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (userError) console.log(`error: ${userError}`);
   if (userLoading) return <p>Loading...</p>;
 
-  if (!Array.isArray(user)) {
+  if (!Array.isArray(users)) {
     return <p>No Users Available.</p>;
   }
 
@@ -23,7 +23,7 @@ const UserTable = () => {
     setIsModalOpen(false);
   };
 
-  const filteredUserData = user.filter((item) => item.role === "admin");
+  const filteredUserData = users.filter((user: any) => user.role === "ADMIN");
 
   return (
     <div>
@@ -32,7 +32,7 @@ const UserTable = () => {
         data={filteredUserData}
         renderRow={(item) => (
           <>
-            <td>{item?.username}</td>
+            <td>{item?.firstName}{item?.lastName}</td>
             <td>{item?.email}</td>
             <td>{item?.role}</td>
           </>

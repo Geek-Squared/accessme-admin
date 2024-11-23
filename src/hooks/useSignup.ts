@@ -1,4 +1,5 @@
 import useSWR, { mutate } from "swr";
+import { apiUrl } from "../utils/apiUrl";
 
 const fetcher = (url: string, options: any) =>
   fetch(url, options).then((res) => res.json());
@@ -16,8 +17,8 @@ function useSignUp() {
     role: string
   ) => {
     const response = await mutate(
-      "http://localhost:8080/auth/signup",
-      fetcher("http://localhost:8080/auth/signup", {
+      `${apiUrl}/auth/signup`,
+      fetcher(`${apiUrl}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -118,7 +118,7 @@ const Table: React.FC<TableProps> = ({
             <thead>
               <tr>
                 <th>
-                  <input
+                  {/* <input
                     type="checkbox"
                     onChange={(e) => {
                       const allSelected = e.target.checked;
@@ -126,7 +126,7 @@ const Table: React.FC<TableProps> = ({
                         allSelected ? new Set(currentData.map((_, idx) => idx)) : new Set()
                       );
                     }}
-                  />
+                  /> */}
                 </th>
                 {headers.map((header, index) => (
                   <th key={index} onClick={() => handleSort(header)}>

@@ -70,6 +70,7 @@ const RegisterOrganization: FC = () => {
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     setIsSubmitting(true);
+    console.log('form-data', data)
     try {
       let logoUrl = "";
 

@@ -23,6 +23,7 @@ function useFetchOrganization() {
     dedupingInterval: 60000,
   });
 
+  console.log('data', data)
   return {
     org: data,
     isLoading,

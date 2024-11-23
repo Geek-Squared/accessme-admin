@@ -12,7 +12,7 @@ import useDeleteSite from "../../hooks/useDeleteSite";
 const SiteTable = () => {
   const { sites: fetchedSites, isError, isLoading } = useFetchSites();
   const { org } = useFetchOrganization();
-  const {deleteSite} = useDeleteSite()
+  const { deleteSite } = useDeleteSite();
   const [sites, setSites] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [_, setEditingSiteId] = useState<string | null>(null);
@@ -22,8 +22,6 @@ const SiteTable = () => {
   const [siteIdToDelete, setSiteIdToDelete] = useState<string | null>(null);
   // const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-
-  
 
   useEffect(() => {
     if (fetchedSites) {
@@ -45,7 +43,7 @@ const SiteTable = () => {
   }
 
   const filteredSites = sites.filter(
-    (site: any) => site.organizationId === org[0].id
+    (site: any) => site.organizationId === org[0]?.id
   );
 
   const handleAddSite = () => {
@@ -71,28 +69,28 @@ const SiteTable = () => {
 
   const handleDelete = async () => {
     if (!siteIdToDelete) return;
-  
+
     try {
       await deleteSite(siteIdToDelete);
-  
+
       // Remove the deleted site from local state
-      setSites((prevSites) => prevSites.filter((site) => site.id !== siteIdToDelete));
-  
-      console.log('Site deleted successfully:', siteIdToDelete);
-  
+      setSites((prevSites) =>
+        prevSites.filter((site) => site.id !== siteIdToDelete)
+      );
+
+      console.log("Site deleted successfully:", siteIdToDelete);
+
       // Reset deletion state
       setSiteIdToDelete(null);
       setIsConfirmationModalOpen(false); // Close the confirmation modal
-  
     } catch (error) {
       console.error("Error deleting site:", error);
     }
   };
-  
+
   const toggleDropdown = (siteId: string) => {
     setDropdownVisible((prev) => (prev === siteId ? null : siteId));
   };
-  
 
   const renderIcons = (site: any) => [
     <div className="actions-container" key={site.id}>
@@ -113,7 +111,7 @@ const SiteTable = () => {
           d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
         />
       </svg>
-  
+
       <DropdownMenu
         key={`dropdown-${site.id}`}
         isOpen={dropdownVisible === site.id}
@@ -124,8 +122,6 @@ const SiteTable = () => {
       />
     </div>,
   ];
-  
-  
 
   return (
     <>
@@ -134,7 +130,7 @@ const SiteTable = () => {
         data={filteredSites}
         renderRow={(site) => (
           <>
-            <td onClick={() => navigate(`visitors-log/${site._id}`)}>
+            <td onClick={() => navigate(`visitors-log/${site.id}`)}>
               {site?.name}
             </td>
             <td>{site?.city}</td>

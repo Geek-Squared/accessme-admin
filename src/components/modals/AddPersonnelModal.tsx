@@ -7,6 +7,7 @@ import useFetchOrganization from "../../hooks/useFetchOrg";
 import useFetchSites from "../../hooks/useFetchSites";
 import useUpdateSite from "../../hooks/useUpdateSite";
 import useUpdateOrganization from "../../hooks/useUpdateOrg";
+import { apiUrl } from "../../utils/apiUrl";
 
 interface IAddPersonnelModal {
   isOpen: boolean;
@@ -14,7 +15,8 @@ interface IAddPersonnelModal {
 }
 
 interface IFormInput {
-  username: string;
+  firstName: string;
+  lastName: string;
   phoneNumber: string;
   siteId: string;
   pin: number;
@@ -27,38 +29,35 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
     formState: { errors },
   } = useForm<IFormInput>();
 
-  const { organization } = useFetchOrganization();
+  const { org } = useFetchOrganization();
   const { sites } = useFetchSites();
-  const { updateSite } = useUpdateSite();
-  const { updateOrganization } = useUpdateOrganization();
   const [isLoading, setIsLoading] = useState(false);
 
   const filteredSites = sites?.filter(
-    (site: any) => site.organizationId === organization?._id
+    (site: any) => site.organizationId === org[0]?.id
   );
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const personnelData = {
       ...data,
-      organizationId: organization?._id,
-      role: "personnel",
+      firstName: data.firstName,
+      lastName: data.lastName,
+      organizationId: org?.[0]?.id,
+      sitesId: parseInt(data.siteId, 10),
+      role: "PERSONNEL",
     };
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        "https://different-armadillo-940.convex.site/user-personnel",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(personnelData),
-        }
-      );
+      const response = await fetch(`${apiUrl}/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(personnelData),
+      });
 
       const responseData = await response.json();
-
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -69,18 +68,13 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
       const personnelId = responseData.userId.userId;
       const siteId = data.siteId;
 
-      await updateSite(siteId, {
-        personnel: [personnelId],
-      });
-
-      await updateOrganization(organization?._id, {
-        personnel: [personnelId],
-      });
+      // Uncomment these lines if updateSite or updateOrganization functions are needed.
+      // await updateSite(siteId, { personnel: [personnelId] });
+      // await updateOrganization(org?.[0]?.id, { personnel: [personnelId] });
 
       onClose();
     } catch (error) {
       console.error("Failed to add personnel:", error);
-      // toast.error("Failed to add personnel. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -97,9 +91,12 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
           </button>
           <h2 className="modal-header">Add Personnel</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <label>Name:</label>
-            <input {...register("username", { required: true })} />
-            {errors.username && <span>This field is required</span>}
+            <label>First Name:</label>
+            <input {...register("firstName", { required: true })} />
+            {errors.firstName && <span>This field is required</span>}
+            <label>Last Name:</label>
+            <input {...register("lastName", { required: true })} />
+            {errors.lastName && <span>This field is required</span>}
 
             <label>Phone Number:</label>
             <input {...register("phoneNumber", { required: true })} />
@@ -109,10 +106,8 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
             <select {...register("siteId", { required: true })}>
               <option value="">Select a site</option>
               {filteredSites?.map((site: any) => (
-                <option key={site._id} value={site._id}>
-                  {site
-                    ? `${site.name} - ${site.address.city}`
-                    : "No site available"}
+                <option key={site.id} value={site.id}>
+                  {site ? `${site.name} - ${site.city}` : "No site available"}
                 </option>
               ))}
             </select>
