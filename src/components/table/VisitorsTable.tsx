@@ -13,9 +13,9 @@ const VisitorsTable = () => {
   const { users } = useFetchUsers();
   const { siteId } = useParams<{ siteId: string }>();
 
-  const tableRef = useRef<HTMLDivElement>(null);
+  console.log("siteId", siteId);
 
-  console.log("users", users);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   // State for date filtering
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -28,11 +28,6 @@ const VisitorsTable = () => {
     return <p>No visitors available.</p>;
   }
 
-  const personnelOnDuty = users?.filter((user: any) =>
-    visitors.some((visitor) => visitor.userId === user.id)
-  );
-
-  console.log("personnelOnDuty", personnelOnDuty);
 
   const formatDate = (timestamp: string | number) => {
     const date =
@@ -64,19 +59,16 @@ const VisitorsTable = () => {
     ];
 
     const rows = filteredData?.map((visitor: any) => {
-      const personnelOnDuty = personnel
-        ?.filter((person: any) =>
-          visitor.security_personnel.includes(person._id)
-        )
-        .map((person: any) => person?.username)
-        .join(", ");
+      const personnelOnDuty = personnel?.filter((person: any) =>
+        visitor.security_personnel.includes(person._id)
+      );
 
       return [
         visitor?.name,
         visitor?.phone,
         visitor?.idNumber,
         visitor?.visiting,
-        formatDate(visitor?._creationTime),
+        formatDate(visitor?.createdAt),
         formatTime(visitor?.entryTime),
         visitor?.exitTime ? formatTime(visitor?.exitTime) : "Still on-site",
         personnelOnDuty,
@@ -102,10 +94,22 @@ const VisitorsTable = () => {
     ?.filter((visitor: any) => visitor.siteId === siteId)
     ?.filter((visitor: any) => {
       if (!startDate || !endDate) return true;
-      const visitorDate = new Date(visitor?._creationTime);
+      const visitorDate = new Date(visitor?.createdAt);
       return visitorDate >= startDate && visitorDate <= endDate;
     });
 
+  console.log("visitor", typeof siteId);
+  console.log("filteredVisitors", filteredVisitors);
+
+  const filteredSiteVisitors = visitors?.filter(
+    //@ts-expect-error
+    (visitor) => visitor.siteId === parseInt(siteId)
+  );
+
+  const personnelOnDuty = users?.filter((user: any) =>
+    filteredSiteVisitors.some((visitor: any) => visitor.userId === user.id)
+  );
+  
   return (
     <div>
       <div ref={tableRef}>
@@ -121,7 +125,7 @@ const VisitorsTable = () => {
             "Personnel On Duty",
           ]}
           isHeader={false}
-          data={visitors}
+          data={filteredSiteVisitors}
           renderRow={(visitor) => (
             <>
               <td>{visitor?.name}</td>

@@ -78,8 +78,6 @@ const SiteTable = () => {
         prevSites.filter((site) => site.id !== siteIdToDelete)
       );
 
-      console.log("Site deleted successfully:", siteIdToDelete);
-
       // Reset deletion state
       setSiteIdToDelete(null);
       setIsConfirmationModalOpen(false); // Close the confirmation modal

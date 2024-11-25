@@ -16,25 +16,15 @@ const PersonnelTable = () => {
 
   const { users } = useFetchUsers();
 
-  console.log("users", users);
   if (isError) console.log(`error: ${isError}`);
   if (isLoading) return <p>Loading...</p>;
   if (!Array.isArray(personnel)) {
     return <p>No personnel available.</p>;
   }
 
-  const findMatchingPersonnel = (organizations: any[]) => {
-    return organizations.flatMap(
-      (org: any) =>
-        org.users?.filter((user: any) => user.role === "PERSONNEL") || []
-    );
-  };
-
   const filteredPersonnel = users?.filter(
     (user: any) => user.role === "PERSONNEL"
   );
-
-  console.log("Filtered Personnel:", org);
 
   const handleAddPersonnel = () => {
     setIsModalOpen(true);
@@ -42,7 +32,6 @@ const PersonnelTable = () => {
   const toggleDropdown = (siteId: string) => {
     setDropdownVisible((prev) => (prev === siteId ? null : siteId));
   };
-  
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -54,7 +43,7 @@ const PersonnelTable = () => {
   };
 
   const handleDelete = async () => {
-   console
+    console;
   };
   const renderIcons = (site: any) => [
     <div className="actions-container" key={site.id}>
@@ -87,11 +76,16 @@ const PersonnelTable = () => {
     </div>,
   ];
 
-
   return (
     <>
       <Table
-        headers={["Name", "Phone Number", "Status", "Current Site Location", "Actions"]}
+        headers={[
+          "Name",
+          "Phone Number",
+          "Status",
+          "Current Site Location",
+          "Actions",
+        ]}
         data={filteredPersonnel}
         renderIcons={renderIcons}
         renderRow={(person) => (

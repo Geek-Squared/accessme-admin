@@ -15,9 +15,9 @@ interface TableProps {
   isHeader?: boolean;
   itemsPerPage?: number;
   onEditRows?: (selectedRows: any[]) => void;
-  isVisitors?: boolean;  // New prop for visitor-specific logic
-  onDownloadClick?: (filteredData: any[]) => void;  // Pass filtered data
-  startDate?: Date | null;  // Date range state
+  isVisitors?: boolean; // New prop for visitor-specific logic
+  onDownloadClick?: (filteredData: any[]) => void; // Pass filtered data
+  startDate?: Date | null; // Date range state
   endDate?: Date | null;
   onStartDateChange?: (date: Date | null) => void;
   onEndDateChange?: (date: Date | null) => void;
@@ -43,13 +43,19 @@ const Table: React.FC<TableProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  } | null>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
   const handleSort = (header: string) => {
     setSortConfig((prevSortConfig) => {
       if (prevSortConfig?.key === header) {
-        return { key: header, direction: prevSortConfig.direction === "asc" ? "desc" : "asc" };
+        return {
+          key: header,
+          direction: prevSortConfig.direction === "asc" ? "desc" : "asc",
+        };
       } else {
         return { key: header, direction: "asc" };
       }
@@ -63,17 +69,19 @@ const Table: React.FC<TableProps> = ({
     return 0;
   };
 
-  const filteredData = data.filter((item) =>
-    Object.values(item).some((value) =>
-      value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = data
+    ?.filter((item) =>
+      Object.values(item).some((value) =>
+        value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      )
     )
-  );
+    ?.reverse();
 
   const sortedData = sortConfig ? filteredData.sort(compare) : filteredData;
-  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedData?.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = sortedData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentData = sortedData?.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -99,18 +107,26 @@ const Table: React.FC<TableProps> = ({
         onClick={onButtonClick}
         onSearchChange={handleSearchChange}
         isHeaderButton={isHeader}
-        isVisitors={isVisitors}  // Pass the isVisitors prop
-        startDate={startDate}     // Pass the start date
-        endDate={endDate}         // Pass the end date
-        onStartDateChange={onStartDateChange}   // Handle start date change
-        onEndDateChange={onEndDateChange}       // Handle end date change
-        onDownloadClick={() => onDownloadClick?.(filteredData)}  // Pass filtered data
+        isVisitors={isVisitors} // Pass the isVisitors prop
+        startDate={startDate} // Pass the start date
+        endDate={endDate} // Pass the end date
+        onStartDateChange={onStartDateChange} // Handle start date change
+        onEndDateChange={onEndDateChange} // Handle end date change
+        onDownloadClick={() => onDownloadClick?.(filteredData)} // Pass filtered data
       />
 
-      {sortedData.length === 0 ? (
+      {sortedData?.length === 0 ? (
         <div className="empty-state-container">
-          {emptyStateImage && <img src={emptyStateImage} alt="No data available" className="empty-state-image" />}
-          {emptyStateMessage && <p className="empty-state-message">{emptyStateMessage}</p>}
+          {emptyStateImage && (
+            <img
+              src={emptyStateImage}
+              alt="No data available"
+              className="empty-state-image"
+            />
+          )}
+          {emptyStateMessage && (
+            <p className="empty-state-message">{emptyStateMessage}</p>
+          )}
         </div>
       ) : (
         <>
@@ -128,26 +144,35 @@ const Table: React.FC<TableProps> = ({
                     }}
                   /> */}
                 </th>
-                {headers.map((header, index) => (
+                {headers?.map((header, index) => (
                   <th key={index} onClick={() => handleSort(header)}>
                     {header}
-                    {sortConfig?.key === header && <span>{sortConfig.direction === "asc" ? " ▲" : " ▼"}</span>}
+                    {sortConfig?.key === header && (
+                      <span>
+                        {sortConfig.direction === "asc" ? " ▲" : " ▼"}
+                      </span>
+                    )}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {currentData.map((item, index) => (
+              {currentData?.map((item, index) => (
                 <tr key={index}>
                   <td>
                     <input
                       type="checkbox"
                       checked={selectedRows.has(index)}
-                      onChange={() => setSelectedRows(prev => new Set(prev).add(index))}
+                      onChange={() =>
+                        setSelectedRows((prev) => new Set(prev).add(index))
+                      }
                     />
                   </td>
                   {renderRow(item)}
-                  {renderIcons && renderIcons(item).map((icon, iconIndex) => <td key={iconIndex}>{icon}</td>)}
+                  {renderIcons &&
+                    renderIcons(item)?.map((icon, iconIndex) => (
+                      <td key={iconIndex}>{icon}</td>
+                    ))}
                 </tr>
               ))}
             </tbody>
@@ -155,7 +180,11 @@ const Table: React.FC<TableProps> = ({
 
           {/* Pagination Controls */}
           <div className="pagination-controls">
-            <button onClick={handlePrevPage} disabled={currentPage === 1} className="pagination-button">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="pagination-button"
+            >
               Previous
             </button>
             {Array.from({ length: totalPages }, (_, i) => (
@@ -167,7 +196,11 @@ const Table: React.FC<TableProps> = ({
                 {i + 1}
               </button>
             ))}
-            <button onClick={handleNextPage} disabled={currentPage === totalPages} className="pagination-button">
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
               Next
             </button>
           </div>
