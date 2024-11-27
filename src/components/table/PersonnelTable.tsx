@@ -2,16 +2,14 @@ import { useState } from "react";
 import useFetchPersonnel from "../../hooks/useFetchPersonnel";
 import "./styles.scss";
 import AddPersonnelModal from "../modals/AddPersonnelModal";
-import useFetchOrganization from "../../hooks/useFetchOrg";
 import Table from "../table/Table";
 import useFetchUsers from "../../hooks/useFetchUsers";
 import DropdownMenu from "../modals/DropdownMenu";
 
 const PersonnelTable = () => {
   const { personnel, isError, isLoading } = useFetchPersonnel();
-  const { org } = useFetchOrganization();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [_, setIsConfirmationModalOpen] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState<string | null>(null);
 
   const { users } = useFetchUsers();
@@ -37,14 +35,11 @@ const PersonnelTable = () => {
     setIsModalOpen(false);
   };
 
-  const confirmDelete = (siteId: string) => {
+  const confirmDelete = () => {
     // setSiteIdToDelete(siteId);
     setIsConfirmationModalOpen(true);
   };
 
-  const handleDelete = async () => {
-    console;
-  };
   const renderIcons = (site: any) => [
     <div className="actions-container" key={site.id}>
       <svg
@@ -70,7 +65,7 @@ const PersonnelTable = () => {
         isOpen={dropdownVisible === site.id}
         itemId={site.id}
         onEdit={() => console.log(site.id)}
-        onDelete={() => confirmDelete(site.id)}
+        onDelete={() => confirmDelete()}
         onClose={() => setDropdownVisible(null)}
       />
     </div>,

@@ -1,4 +1,4 @@
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 import { apiUrl } from "../utils/apiUrl";
 
 const fetcher = (url: string | URL | Request, options: RequestInit | undefined) =>

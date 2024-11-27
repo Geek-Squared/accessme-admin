@@ -5,8 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./styles.scss";
 import useFetchOrganization from "../../hooks/useFetchOrg";
 import useFetchSites from "../../hooks/useFetchSites";
-import useUpdateSite from "../../hooks/useUpdateSite";
-import useUpdateOrganization from "../../hooks/useUpdateOrg";
 import { apiUrl } from "../../utils/apiUrl";
 
 interface IAddPersonnelModal {
@@ -57,16 +55,13 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({ isOpen, onClose }) => {
         body: JSON.stringify(personnelData),
       });
 
-      const responseData = await response.json();
-
       if (!response.ok) {
         throw new Error("Network response was not ok");
       } else {
         toast.success("Personnel added successfully!");
       }
 
-      const personnelId = responseData.userId.userId;
-      const siteId = data.siteId;
+
 
       // Uncomment these lines if updateSite or updateOrganization functions are needed.
       // await updateSite(siteId, { personnel: [personnelId] });

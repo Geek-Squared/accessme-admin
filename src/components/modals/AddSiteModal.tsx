@@ -1,6 +1,5 @@
 import { FC, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useFetchOrganization from "../../hooks/useFetchOrg";
 import useCreateSite from "../../hooks/useCreateSite";
 import { mutate } from "swr";
@@ -8,7 +7,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useEditSite from "../../hooks/useUpdateSite";
 import { apiUrl } from "../../utils/apiUrl";
-import useFetchSiteById from "../../hooks/useFetchSiteById";
 
 interface IAddSiteModal {
   isOpen: boolean;
@@ -41,11 +39,9 @@ const AddSiteModal: FC<IAddSiteModal> = ({
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>();
 
-  const { user } = useFetchCurrentUser();
   const { org } = useFetchOrganization();
   const { createSite } = useCreateSite();
   const { updateSite } = useEditSite(siteId);
-  const {siteById} = useFetchSiteById(siteId);
 
 
   // Pre-fill form data if editing an existing site
@@ -77,6 +73,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({
     };
 
     try {
+      //@ts-ignore
       let response;
       if (siteId) {
         response = await updateSite(siteDataToSubmit);
