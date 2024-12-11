@@ -6,8 +6,8 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center; // Center horizontally
-  align-items: center; // Center vertically
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
   height: max-content;
 }
@@ -17,16 +17,15 @@
   padding: 20px;
   width: 400px;
   max-width: 90%;
-  max-height: 90%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.3s forwards;
-  border-radius: 10px; // Optional: Adds rounded corners
+  border-radius: 10px;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.9); // Optional: Adds slight scaling
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -47,12 +46,12 @@
 .modal-content form {
   display: flex;
   flex-direction: column;
-  gap: 20px; // Space between each field
+  gap: 17px;
 }
 
 label {
   font-size: 14px;
-  color: #333; // A neutral color for the label text
+  color: #333;
   font-weight: 500;
   margin-bottom: 5px;
 }
@@ -128,4 +127,86 @@ span.error-message {
   to {
     transform: rotate(360deg);
   }
+}
+
+
+/* AddCustomFieldsModal specific styles */
+
+/* Overlay */
+.modal-overlay.add-fields-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modal-content.add-fields-modal-content {
+  background: white;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s forwards;
+  border-radius: 10px;
+}
+
+/* Buttons */
+.add-field-btn,
+.remove-field-btn,
+.submit-btn {
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-field-btn {
+  background: #007bff;
+  color: white;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border: none;
+}
+
+.add-field-btn:hover {
+  background: #0056b3;
+}
+
+.remove-field-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+}
+
+.remove-field-btn:hover {
+  background: #d41c1c;
+}
+
+.submit-btn {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.submit-btn:hover {
+  background: #218838;
+}
+
+/* Field styles */
+.dynamic-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }

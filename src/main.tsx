@@ -8,20 +8,18 @@ import {
 } from "react-router-dom";
 import App from "./App.tsx";
 import Register from "./pages/auth/signup.tsx";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
 
 import Login from "./pages/auth/login.tsx";
 import SiteTable from "./components/table/SiteTable.tsx";
 import Sidebar from "./components/nav/Navbar.tsx";
 import PersonnelTable from "./components/table/PersonnelTable.tsx";
-import RegisterOrganization from "./pages/auth/register.tsx";
+import RegisterOrganization from "./pages/organization/register.tsx";
 import { AuthProvider } from "./context/authContext.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import UserTable from "./components/table/UsersTable.tsx";
 import VisitorsTable from "./components/table/VisitorsTable.tsx";
 import Profile from "./pages/profile.tsx";
-
-const convex = new ConvexReactClient("https://different-armadillo-940.convex.cloud");
+import ConfigTable from "./components/table/ConfigTable.tsx";
 
 const Layout = () => {
   const location = useLocation();
@@ -47,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <ProtectedRoute element={<App />} />,
+      },
+      {
+        path: "/forms",
+        element: <ProtectedRoute element={<ConfigTable />} />,
       },
       {
         path: "/sites",
@@ -87,10 +89,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <ConvexProvider client={convex}>
-       
-        <RouterProvider router={router} />
-      </ConvexProvider>
+      <RouterProvider router={router} />
     </AuthProvider>
   </StrictMode>
 );

@@ -24,7 +24,6 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // Once authenticated, redirect based on the 'from' parameter
       const params = new URLSearchParams(location.search);
       const fromSignup = params.get("from") === "signup";
       navigate(fromSignup ? "/register-org" : "/");
@@ -36,13 +35,9 @@ const Login = () => {
     try {
       const response = await login(formData.email, formData.password);
       if (response?.token) {
-        // Store the token in localStorage
         localStorage.setItem("token", response.token);
-        // Set the authentication state
         authLogin();
-        // The useEffect will handle the navigation after the user is authenticated
       }
-      console.log(response);
     } catch (error) {
       console.error("Error logging in:", error);
     } finally {
