@@ -9,9 +9,11 @@ import ConfirmationModal from "../modals/ConfirmationModal";
 import useDeleteSite from "../../hooks/useDeleteSite";
 import AddCustomFieldsModal from "../modals/AddCustomFieldsModal";
 import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
+import useFetchCustomForms from "../../hooks/useFetchCustomForms";
 
 const ConfigTable = () => {
   const { sites: fetchedSites, isError, isLoading } = useFetchSites();
+  const {forms} = useFetchCustomForms();
   const { org } = useFetchOrganization();
   const { deleteSite } = useDeleteSite();
   const [sites, setSites] = useState<any[]>([]);
@@ -25,7 +27,7 @@ const ConfigTable = () => {
   const navigate = useNavigate();
   const {user} = useFetchCurrentUser()
 
-  console.log('user', user)
+  console.log('forms', forms)
 
   useEffect(() => {
 
@@ -47,9 +49,9 @@ const ConfigTable = () => {
     return <p>No Sites Available.</p>;
   }
 
-  const filteredSites = sites.filter(
-    (site: any) => site.organizationId === org[0]?.id
-  );
+  // const filteredSites = forms?.filter(
+  //   (site: any) => site.organizationId === org[0]?.id
+  // );
 
   const handleAddSite = () => {
     setEditingSiteId(null);
@@ -80,7 +82,7 @@ const ConfigTable = () => {
 
       // Remove the deleted site from local state
       setSites((prevSites) =>
-        prevSites.filter((site) => site.id !== siteIdToDelete)
+        prevSites?.filter((site) => site.id !== siteIdToDelete)
       );
 
       // Reset deletion state
@@ -129,8 +131,8 @@ const ConfigTable = () => {
   return (
     <>
       <Table
-        headers={["Category", "Site", "Personnel On Duty", "Actions"]}
-        data={filteredSites}
+        headers={["Category", "Site",  "Actions"]}
+        data={forms}
         renderRow={(site) => (
           <>
             <td onClick={() => navigate(`visitors-log/${site.id}`)}>

@@ -2,17 +2,17 @@ import { FC } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./styles.scss"; // Add styles for this modal
+import "./styles.scss";
+import useCreateCustomForm from "../../hooks/useCreateCustomForm";
 
 // Props interface for the modal
 interface IAddSiteModal {
   isOpen: boolean;
   onClose: () => void;
-  siteData?: any; // Optional prop for site data when editing
-  siteId?: string; // Optional prop for edit mode
+  siteData?: any;
+  siteId?: string;
 }
 
-// TypeScript interface for the form data
 interface FormValues {
   name: string;
   description: string;
@@ -28,36 +28,39 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
   onClose,
   siteId,
 }) => {
-  // React Hook Form setup
   const { control, register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
       name: "",
       description: "",
-      fields: [{ name: "", type: "TEXT", required: false }], // Default empty field
+      fields: [{ name: "", type: "TEXT", required: false }], 
     },
   });
 
-  // Dynamic field array management
   const { fields, append, remove } = useFieldArray({
     control,
     name: "fields",
   });
 
-  // Form submission handler
-  const onSubmit = (data: FormValues) => {
-    console.log("Submitted Data:", data);
+  const { createCategory, isLoading } = useCreateCustomForm();
 
-    // Example: Toast notification
-    toast.success(
-      siteId ? "Site updated successfully!" : "Site added successfully!"
-    );
-
-    // Reset form after submission
-    reset();
-    onClose();
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await createCategory({
+        name: data.name,
+        description: data.description,
+        siteId: 1,
+        fields: data.fields,
+      });
+      toast.success("Category created successfully!");
+      reset();
+      onClose();
+    } catch (error) {
+      console.error("Error creating category:", error);
+      toast.error("Failed to create category. Please try again.");
+    }
   };
 
-  if (!isOpen) return null; // Modal not rendered when `isOpen` is false
+  if (!isOpen) return null;
 
   return (
     <>
@@ -151,8 +154,8 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="submit-btn">
-              {siteId ? "Save Changes" : "Add Site"}
+            <button type="submit" className="submit-btn" disabled={isLoading}>
+              {isLoading ? "Submitting..." : siteId ? "Save Changes" : "Add Site"}
             </button>
           </form>
         </div>

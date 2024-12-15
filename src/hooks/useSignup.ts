@@ -17,14 +17,17 @@ function useSignUp() {
     role: string
   ) => {
     const response = await mutate(
-      `${apiUrl}/auth/signup`,
-      fetcher(`${apiUrl}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ firstName, lastName, email, password, role }),
-      }),
+      `https://acsys-app-813266374764.europe-west2.run.app/auth/signup`,
+      fetcher(
+        `https://acsys-app-813266374764.europe-west2.run.app/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ firstName, lastName, email, password, role }),
+        }
+      ),
       false
     );
     console.log(response);
