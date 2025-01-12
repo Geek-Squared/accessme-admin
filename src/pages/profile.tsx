@@ -1,46 +1,100 @@
 import { useState } from "react";
-import "./styles.scss";
 import useFetchCurrentUser from "../hooks/useFetchCurrentUser";
+import useFetchOrganization from "../hooks/useFetchOrg";
+import useUpdateUser from "../hooks/useUpdateUser";
+import "./styles.scss";
 
 const Profile = () => {
-  const [profile, setProfile] = useState({
-    profilePicture: "default-picture.jpg",
-    name: "Kevin Heart",
-    username: "kevinunhuy",
-    status: "On duty",
-    about: "Discuss only on work hours, unless you wanna discuss music 🎶",
-    availableChange: "25/04/2024",
+  const { user } = useFetchCurrentUser();
+  //@ts-ignore
+  const { org, setOrg } = useFetchOrganization(user?.organizationId);
+  const { updateUser } = useUpdateUser();
+
+  const [orgDetails, setOrgDetails] = useState({
+    name: org[0]?.name || "",
+    logoUrl: org[0]?.logoUrl || "",
   });
 
-  const { user } = useFetchCurrentUser();
+  const [isEditingOrg, setIsEditingOrg] = useState(false);
 
-  const handleInputChange = (e: any) => {
+  const handleOrgInputChange = (e: any) => {
     const { name, value } = e.target;
-    setProfile({ ...profile, [name]: value });
+    setOrgDetails({ ...orgDetails, [name]: value });
+  };
+
+  const handleSaveOrgChanges = async () => {
+    try {
+      await updateUser(user.organizationId, {
+        name: orgDetails.name,
+        logoUrl: orgDetails.logoUrl,
+      });
+      setOrg(orgDetails);
+      setIsEditingOrg(false);
+      alert("Organization details updated successfully!");
+    } catch (error) {
+      console.error("Failed to update organization details:", error);
+    }
   };
 
   return (
     <div className="profile-page">
-   
-
-      <div className="profile-container">
-        <h2>Profile Settings</h2>
-        <div className="profile-actions">
-          <button className="change-btn">Change picture</button>
-          <button className="delete-btn">Delete picture</button>
+      {/* Organization Section */}
+      <div className="profile-header">
+        <div className="org-logo">
+          <img src={orgDetails.logoUrl} alt="Organization Logo" />
+          {isEditingOrg && (
+            <input
+              type="text"
+              name="logoUrl"
+              value={orgDetails.logoUrl}
+              onChange={handleOrgInputChange}
+              placeholder="Enter new logo URL"
+            />
+          )}
         </div>
-        <div className="profile-info">
-          <label>Profile Name</label>
+        {isEditingOrg ? (
           <input
             type="text"
             name="name"
-            value={user.firstName}
-            onChange={handleInputChange}
-            disabled
+            value={orgDetails.name}
+            onChange={handleOrgInputChange}
+            placeholder="Enter organization name"
           />
-          <label>Email</label>
-          <input type="email" name="email" value={user.email} disabled />
-          <button className="save-btn">Save Changes</button>
+        ) : (
+          <h1>{orgDetails.name}</h1>
+        )}
+        {/* <button onClick={() => setIsEditingOrg(!isEditingOrg)}>
+          {isEditingOrg ? "Cancel" : "Edit Organization"}
+        </button> */}
+        {isEditingOrg && (
+          <button onClick={handleSaveOrgChanges}>Save Changes</button>
+        )}
+      </div>
+
+      {/* Profile Settings Section */}
+      <div className="profile-container">
+        <h2>Profile Settings</h2>
+        <div className="profile-form">
+          <button className="edit-profile-button">Edit Profile</button>
+          <label>Full Name</label>
+          <input
+            type="text"
+            value={`${user.firstName} ${user.lastName}`}
+            readOnly
+          />
+          <label>Username</label>
+          <input
+            type="text"
+            value={`${user.firstName.toLowerCase()}${user.lastName.toLowerCase()}`}
+            readOnly
+          />
+          <label>Role</label>
+          <input
+            type="text"
+            value={`${user.role.toLowerCase()}`}
+            readOnly
+          />
+          
         </div>
       </div>
     </div>

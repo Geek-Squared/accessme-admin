@@ -7,7 +7,7 @@ import useFetchSites from "../../hooks/useFetchSites";
 import { apiUrl } from "../../utils/apiUrl";
 import "./custom.scss";
 
-interface IAddPersonnelModal {
+interface IResidentModal {
   isOpen: boolean;
   onClose: () => void;
   onFormCreated?: () => void;
@@ -21,7 +21,7 @@ interface IFormInput {
   pin: number;
 }
 
-const AddPersonnelModal: FC<IAddPersonnelModal> = ({
+const AddResidentModal: FC<IResidentModal> = ({
   isOpen,
   onClose,
   onFormCreated,
@@ -41,17 +41,17 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
   );
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const loadingToast = toast.loading("Adding Personnel...", {
+    const loadingToast = toast.loading("Adding Resident...", {
       position: "top-right",
     });
 
-    const personnelData = {
+    const residentData = {
       ...data,
       firstName: data.firstName,
       lastName: data.lastName,
       organizationId: org?.[0]?.id,
       sitesId: parseInt(data.siteId, 10),
-      role: "PERSONNEL",
+      role: "RESIDENT",
     };
 
     try {
@@ -61,7 +61,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(personnelData),
+        body: JSON.stringify(residentData),
       });
 
       if (!response.ok) {
@@ -69,7 +69,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
       }
 
       toast.update(loadingToast, {
-        render: "Personnel created successfully!",
+        render: "Resident created successfully!",
         type: "success",
         isLoading: false,
         autoClose: 5000,
@@ -80,9 +80,9 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
         onFormCreated();
       }
     } catch (error) {
-      console.error("Failed to add personnel:", error);
+      console.error("Failed to add resident:", error);
       toast.update(loadingToast, {
-        render: "Failed to add personnel. Please try again.",
+        render: "Failed to add resident. Please try again.",
         type: "error",
         isLoading: false,
         autoClose: 3000,
@@ -104,7 +104,7 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
           <button className="custom-close-icon" onClick={onClose}>
             &times;
           </button>
-          <h2 className="custom-modal-header">Add Personnel</h2>
+          <h2 className="custom-modal-header">Add Resident</h2>
           <div className="custom-scrollable-content">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="custom-form-group">
@@ -171,31 +171,12 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
                 )}
               </div>
 
-              <div className="custom-form-group">
-                <label>4 Digit PIN</label>
-                <input
-                  type="number"
-                  className="custom-input"
-                  {...register("pin", { required: true, min: 1000, max: 9999 })}
-                  placeholder="Enter 4-digit PIN"
-                />
-                {errors.pin && errors.pin.type === "required" && (
-                  <span className="text-red-500 text-sm">PIN is required</span>
-                )}
-                {errors.pin &&
-                  (errors.pin.type === "min" || errors.pin.type === "max") && (
-                    <span className="text-red-500 text-sm">
-                      PIN must be a 4-digit number
-                    </span>
-                  )}
-              </div>
-
               <button
                 type="submit"
                 className="custom-submit-btn"
                 disabled={isLoading}
               >
-                {isLoading ? "Submitting..." : "Add Personnel"}
+                {isLoading ? "Submitting..." : "Add Resident"}
               </button>
             </form>
           </div>
@@ -206,4 +187,4 @@ const AddPersonnelModal: FC<IAddPersonnelModal> = ({
   );
 };
 
-export default AddPersonnelModal;
+export default AddResidentModal;

@@ -18,7 +18,12 @@ const fetcher = (...args: [RequestInfo, RequestInit?]) => {
 };
 
 function useCreateSite() {
-  const { data, error, isLoading } = useSWR(null, fetcher, {
+  const {
+    data,
+    error,
+    isLoading,
+    mutate: mutateSites,
+  } = useSWR(null, fetcher, {
     shouldRetryOnError: false,
   });
 
@@ -39,8 +44,12 @@ function useCreateSite() {
     console.log("Response from create site:", response);
 
     mutate(`${apiUrl}/site/create`);
-
+    await mutate(`${apiUrl}/sites`);
     return response;
+  };
+
+  const refreshSites = () => {
+    return mutateSites();
   };
 
   return {
@@ -48,6 +57,7 @@ function useCreateSite() {
     data,
     isLoading,
     isError: error,
+    refreshSites,
   };
 }
 

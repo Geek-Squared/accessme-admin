@@ -1,4 +1,5 @@
-import useSWR from "swr";
+// hooks/useFetchCustomForms.ts
+import useSWR, { mutate } from "swr";
 import { apiUrl } from "../utils/apiUrl";
 
 const fetcher = (...args: [RequestInfo, RequestInit?]) => {
@@ -17,9 +18,8 @@ const fetcher = (...args: [RequestInfo, RequestInit?]) => {
   });
 };
 
-
 function useFetchCustomForms() {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate: mutateForms } = useSWR(
     `${apiUrl}/category`,
     fetcher,
     {
@@ -27,10 +27,16 @@ function useFetchCustomForms() {
       dedupingInterval: 60000,
     }
   );
+
+  const refreshForms = () => {
+    return mutateForms();
+  };
+
   return {
     forms: data,
     isLoading,
     isError: error,
+    refreshForms,
   };
 }
 

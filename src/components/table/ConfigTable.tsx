@@ -1,66 +1,75 @@
 import { useState, useEffect } from "react";
 import useFetchSites from "../../hooks/useFetchSites";
 import { useNavigate } from "react-router-dom";
-import "./styles.scss";
-import useFetchOrganization from "../../hooks/useFetchOrg";
 import Table from "./Table";
 import DropdownMenu from "../modals/DropdownMenu";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import useDeleteSite from "../../hooks/useDeleteSite";
 import AddCustomFieldsModal from "../modals/AddCustomFieldsModal";
-import useFetchCurrentUser from "../../hooks/useFetchCurrentUser";
 import useFetchCustomForms from "../../hooks/useFetchCustomForms";
+import "./styles.scss";
 
 const ConfigTable = () => {
   const { sites: fetchedSites, isError, isLoading } = useFetchSites();
-  const {forms} = useFetchCustomForms();
-  const { org } = useFetchOrganization();
+  const { forms: fetchedForms, refreshForms } = useFetchCustomForms();
   const { deleteSite } = useDeleteSite();
   const [sites, setSites] = useState<any[]>([]);
+  const [forms, setForms] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [_, setEditingSiteId] = useState<string | null>(null);
   const [selectedSite, setSelectedSite] = useState<any>(null);
-  const [dropdownVisible, setDropdownVisible] = useState<string | null>(null);
+
+  const [formDropdownVisible, setFormDropdownVisible] = useState<string | null>(
+    null
+  );
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [siteIdToDelete, setSiteIdToDelete] = useState<string | null>(null);
-  // const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
-  const {user} = useFetchCurrentUser()
 
-  console.log('forms', forms)
+  const navigate = useNavigate();
 
   useEffect(() => {
-
     if (fetchedSites) {
       setSites(fetchedSites);
     }
   }, [fetchedSites]);
 
   useEffect(() => {
+    if (fetchedForms) {
+      setForms(fetchedForms);
+    }
+  }, [fetchedForms]);
+
+  useEffect(() => {
     if (isModalOpen) {
-      setDropdownVisible(null);
+      setFormDropdownVisible(null);
     }
   }, [isModalOpen]);
 
   if (isError) console.log(`error: ${isError}`);
   if (isLoading) return <p>Loading...</p>;
 
-  if (!Array.isArray(sites)) {
-    return <p>No Sites Available.</p>;
+  if (!Array.isArray(sites) || !Array.isArray(forms)) {
+    return <p>No Data Available.</p>;
   }
 
-  // const filteredSites = forms?.filter(
-  //   (site: any) => site.organizationId === org[0]?.id
-  // );
+  const filteredForms = forms.map((form: any) => {
+    const site = sites.find((site: any) => site.id === form.siteId);
+    return {
+      ...form,
+      siteName: site ? site.name : "Unknown Site",
+    };
+  });
 
   const handleAddSite = () => {
-    setEditingSiteId(null);
     setSelectedSite(null);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleFormCreated = () => {
+    refreshForms();
   };
 
   const handleEdit = (siteId: string) => {
@@ -79,26 +88,22 @@ const ConfigTable = () => {
 
     try {
       await deleteSite(siteIdToDelete);
-
-      // Remove the deleted site from local state
       setSites((prevSites) =>
         prevSites?.filter((site) => site.id !== siteIdToDelete)
       );
-
-      // Reset deletion state
       setSiteIdToDelete(null);
-      setIsConfirmationModalOpen(false); // Close the confirmation modal
+      setIsConfirmationModalOpen(false);
     } catch (error) {
       console.error("Error deleting site:", error);
     }
   };
 
-  const toggleDropdown = (siteId: string) => {
-    setDropdownVisible((prev) => (prev === siteId ? null : siteId));
+  const toggleFormDropdown = (formId: string) => {
+    setFormDropdownVisible((prev) => (prev === formId ? null : formId));
   };
 
-  const renderIcons = (site: any) => [
-    <div className="actions-container" key={site.id}>
+  const renderFormIcons = (form: any) => (
+    <div className="actions-container" key={form.id}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -108,7 +113,7 @@ const ConfigTable = () => {
         className="size-6 action-icon"
         width="25"
         height="25"
-        onClick={() => toggleDropdown(site.id)}
+        onClick={() => toggleFormDropdown(form.id)}
       >
         <path
           strokeLinecap="round"
@@ -118,35 +123,34 @@ const ConfigTable = () => {
       </svg>
 
       <DropdownMenu
-        key={`dropdown-${site.id}`}
-        isOpen={dropdownVisible === site.id}
-        itemId={site.id}
-        onEdit={() => handleEdit(site.id)}
-        onDelete={() => confirmDelete(site.id)}
-        onClose={() => setDropdownVisible(null)}
+        key={`dropdown-form-${form.id}`}
+        isOpen={formDropdownVisible === form.id}
+        itemId={form.id}
+        onEdit={() => handleEdit(form.siteId)}
+        onDelete={() => confirmDelete(form.siteId)}
+        onClose={() => setFormDropdownVisible(null)}
       />
-    </div>,
-  ];
+    </div>
+  );
 
   return (
     <>
       <Table
-        headers={["Category", "Site",  "Actions"]}
-        data={forms}
-        renderRow={(site) => (
+        headers={["Form Name", "Site", "Actions"]}
+        data={filteredForms}
+        renderRow={(form) => (
           <>
-            <td onClick={() => navigate(`visitors-log/${site.id}`)}>
-              {site?.name}
+            <td>{form?.name}</td>
+            <td onClick={() => navigate(`visitors-log/${form.id}`)}>
+              {form?.siteName}
             </td>
-            <td>{site?.city}</td>
-            <td>None</td>
+            <td>{renderFormIcons(form)}</td>
           </>
         )}
-        renderIcons={renderIcons}
         buttonName="Add Form"
         onButtonClick={handleAddSite}
-        emptyStateMessage="No site available. To add a form, click the Add Form button."
-        emptyStateImage="/sites.svg"
+        emptyStateMessage="No forms available. To add a form, click the Add Form button."
+        emptyStateImage="/forms.svg"
         itemsPerPage={10}
       />
 
@@ -155,10 +159,11 @@ const ConfigTable = () => {
         onClose={handleCloseModal}
         siteData={selectedSite}
         siteId={selectedSite?.id}
+        onFormCreated={handleFormCreated}
       />
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
-        message="Are you sure you want to delete this form?"
+        message="Are you sure you want to delete this site?"
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmationModalOpen(false)}
       />

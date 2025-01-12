@@ -1,57 +1,86 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./styles.scss";
+import useFetchOrganization from "../../hooks/useFetchOrg";
+import { apiUrl } from "../../utils/apiUrl";
+import "./custom.scss";
 
 interface IAddUserModal {
   isOpen: boolean;
   onClose: () => void;
+  onFormCreated?: () => void;
 }
 
 interface IFormInput {
-  username: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  role: string;
+  pin: number;
 }
 
-const AddUserModal: FC<IAddUserModal> = ({ isOpen, onClose }) => {
+const AddUserModal: FC<IAddUserModal> = ({
+  isOpen,
+  onClose,
+  onFormCreated,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInput>();
 
+  const { org } = useFetchOrganization();
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const loadingToast = toast.loading("Adding User...", {
+      position: "top-right",
+    });
+
     const userData = {
-      username: data.username,
-      email: data.email,
-      role: data.role,
+      ...data,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      organizationId: org?.[0]?.id,
+      role: "ADMIN",
     };
 
     try {
-      const response = await fetch(
-        "https://different-armadillo-940.convex.site/user",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
-      );
+      setIsLoading(true);
+      const response = await fetch(`${apiUrl}/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
-      } else {
-        toast.success("User added successfully!");
       }
 
-      console.log("User added successfully:", await response.json());
+      toast.update(loadingToast, {
+        render: "User created successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+
       onClose();
+      if (onFormCreated) {
+        onFormCreated();
+      }
     } catch (error) {
       console.error("Failed to add user:", error);
-      toast.error("Failed to add user. Please try again.");
+      toast.update(loadingToast, {
+        render: "Failed to add user. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,31 +88,94 @@ const AddUserModal: FC<IAddUserModal> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <button className="close-icon" onClick={onClose}>
+      <div className="custom-modal-overlay" onClick={onClose}>
+        <div
+          className="custom-modal-content"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="custom-close-icon" onClick={onClose}>
             &times;
           </button>
-          <h2 className="modal-header">Add User</h2>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <label>Username:</label>
-            <input {...register("username", { required: true })} />
-            {errors.username && <span>This field is required</span>}
+          <h2 className="custom-modal-header">Add User</h2>
+          <div className="custom-scrollable-content">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="custom-form-group">
+                <label>First Name</label>
+                <input
+                  className="custom-input"
+                  {...register("firstName", { required: true })}
+                  placeholder="Enter first name"
+                />
+                {errors.firstName && (
+                  <span className="text-red-500 text-sm">
+                    This field is required
+                  </span>
+                )}
+              </div>
 
-            <label>Email:</label>
-            <input {...register("email", { required: true })} />
-            {errors.email && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>Last Name</label>
+                <input
+                  className="custom-input"
+                  {...register("lastName", { required: true })}
+                  placeholder="Enter last name"
+                />
+                {errors.lastName && (
+                  <span className="text-red-500 text-sm">
+                    This field is required
+                  </span>
+                )}
+              </div>
 
-            <label>Role:</label>
-            <select {...register("role", { required: true })}>
-              <option value="">Select role</option>
-              <option value="admin">Admin</option>
-              <option value="personnel">User</option>
-            </select>
-            {errors.role && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>Email</label>
+                <input
+                  className="custom-input"
+                  type="email"
+                  {...register("email", { 
+                    required: true,
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  })}
+                  placeholder="Enter email address"
+                />
+                {errors.email && (
+                  <span className="text-red-500 text-sm">
+                    {errors.email.message || "This field is required"}
+                  </span>
+                )}
+              </div>
 
-            <button type="submit">Submit</button>
-          </form>
+              {/* <div className="custom-form-group">
+                <label>4 Digit PIN</label>
+                <input
+                  type="number"
+                  className="custom-input"
+                  {...register("pin", { required: true, min: 1000, max: 9999 })}
+                  placeholder="Enter 4-digit PIN"
+                />
+                {errors.pin && errors.pin.type === "required" && (
+                  <span className="text-red-500 text-sm">PIN is required</span>
+                )}
+                {errors.pin &&
+                  (errors.pin.type === "min" || errors.pin.type === "max") && (
+                    <span className="text-red-500 text-sm">
+                      PIN must be a 4-digit number
+                    </span>
+                  )}
+              </div> */}
+
+              <button
+                type="submit"
+                className="custom-submit-btn"
+                disabled={isLoading}
+              >
+                {isLoading ? "Submitting..." : "Add User"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
       <ToastContainer />

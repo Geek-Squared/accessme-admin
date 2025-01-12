@@ -7,12 +7,14 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useEditSite from "../../hooks/useUpdateSite";
 import { apiUrl } from "../../utils/apiUrl";
+import "./custom.scss"
 
 interface IAddSiteModal {
   isOpen: boolean;
   onClose: () => void;
-  siteData?: any; // Optional prop to hold the site data if editing
-  siteId?: string; // Optional prop to determine if it's edit mode
+  siteData?: any;
+  siteId?: string;
+  onFormCreated?: () => void;
 }
 
 interface IFormInput {
@@ -31,6 +33,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({
   onClose,
   siteData,
   siteId,
+  onFormCreated,
 }) => {
   const {
     register,
@@ -43,8 +46,6 @@ const AddSiteModal: FC<IAddSiteModal> = ({
   const { createSite } = useCreateSite();
   const { updateSite } = useEditSite(siteId);
 
-
-  // Pre-fill form data if editing an existing site
   useEffect(() => {
     if (siteId && siteData) {
       setValue("name", siteData.name);
@@ -59,6 +60,13 @@ const AddSiteModal: FC<IAddSiteModal> = ({
   }, [siteId, siteData, setValue]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const loadingToast = toast.loading(
+      siteId ? "Updating site..." : "Creating site...",
+      {
+        position: "top-right",
+      }
+    );
+
     const siteDataToSubmit = {
       name: data.name,
       organizationId: org[0].id,
@@ -73,23 +81,42 @@ const AddSiteModal: FC<IAddSiteModal> = ({
     };
 
     try {
-      //@ts-ignore
       let response;
       if (siteId) {
         response = await updateSite(siteDataToSubmit);
-        toast.success("Site Updated Successfully!");
+        await mutate(`${apiUrl}/sites`);
+        toast.update(loadingToast, {
+          render: "Site updated successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
       } else {
         response = await createSite(siteDataToSubmit);
-        toast.success("Site Created Successfully!");
+        await mutate(`${apiUrl}/sites`);
+        toast.update(loadingToast, {
+          render: "Site created successfully!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
       }
 
       mutate(`${apiUrl}/organization`);
       mutate(`${apiUrl}/currentUser`);
 
       onClose();
+      if (onFormCreated) {
+        onFormCreated();
+      }
     } catch (error) {
       console.error("Failed to submit site:", error);
-      toast.error("Failed to submit site. Please try again.");
+      toast.update(loadingToast, {
+        render: "Failed to submit site. Please try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -97,44 +124,92 @@ const AddSiteModal: FC<IAddSiteModal> = ({
 
   return (
     <>
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <button className="close-icon" onClick={onClose}>
+      <div className="custom-modal-overlay" onClick={onClose}>
+        <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
+          <button className="custom-close-icon" onClick={onClose}>
             &times;
           </button>
-          <h2 className="modal-header">{siteId ? "Edit Site" : "Add Site"}</h2>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <label>Name:</label>
-            <input {...register("name", { required: true })} />
-            {errors.name && <span>This field is required</span>}
+          <h2 className="custom-modal-header">{siteId ? "Edit Site" : "Add Site"}</h2>
+          <div className="custom-scrollable-content">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="custom-form-group">
+                <label>Name</label>
+                <input
+                  className="custom-input"
+                  {...register("name", { required: true })}
+                  placeholder="Site Name"
+                />
+                {errors.name && <span className="text-red-500 text-sm">This field is required</span>}
+              </div>
 
-            <label>Address Line One:</label>
-            <input {...register("addressLineOne", { required: true })} />
-            {errors.addressLineOne && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>Address Line One</label>
+                <input
+                  className="custom-input"
+                  {...register("addressLineOne", { required: true })}
+                  placeholder="Address Line 1"
+                />
+                {errors.addressLineOne && <span className="text-red-500 text-sm">This field is required</span>}
+              </div>
 
-            <label>Address Line Two:</label>
-            <input {...register("addressLineTwo")} />
+              <div className="custom-form-group">
+                <label>Address Line Two</label>
+                <input
+                  className="custom-input"
+                  {...register("addressLineTwo")}
+                  placeholder="Address Line 2 (Optional)"
+                />
+              </div>
 
-            <label>City:</label>
-            <input {...register("city", { required: true })} />
-            {errors.city && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>City</label>
+                <input
+                  className="custom-input"
+                  {...register("city", { required: true })}
+                  placeholder="City"
+                />
+                {errors.city && <span className="text-red-500 text-sm">This field is required</span>}
+              </div>
 
-            <label>Province or State:</label>
-            <input {...register("state", { required: true })} />
-            {errors.state && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>Province or State</label>
+                <input
+                  className="custom-input"
+                  {...register("state", { required: true })}
+                  placeholder="Province/State"
+                />
+                {errors.state && <span className="text-red-500 text-sm">This field is required</span>}
+              </div>
 
-            <label>Postal Code:</label>
-            <input {...register("postalCode", { required: true })} />
-            {errors.postalCode && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>Postal Code</label>
+                <input
+                  className="custom-input"
+                  {...register("postalCode", { required: true })}
+                  placeholder="Postal Code"
+                />
+                {errors.postalCode && <span className="text-red-500 text-sm">This field is required</span>}
+              </div>
 
-            <label>Country:</label>
-            <input {...register("country", { required: true })} />
-            {errors.country && <span>This field is required</span>}
+              <div className="custom-form-group">
+                <label>Country</label>
+                <input
+                  className="custom-input"
+                  {...register("country", { required: true })}
+                  placeholder="Country"
+                />
+                {errors.country && <span className="text-red-500 text-sm">This field is required</span>}
+              </div>
 
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="custom-submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : (siteId ? "Save Changes" : "Add Site")}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
       <ToastContainer />

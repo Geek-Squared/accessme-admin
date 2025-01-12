@@ -10,8 +10,14 @@ import ConfirmationModal from "../modals/ConfirmationModal";
 import useDeleteSite from "../../hooks/useDeleteSite";
 
 const SiteTable = () => {
-  const { sites: fetchedSites, isError, isLoading } = useFetchSites();
-  const { org } = useFetchOrganization();
+  const {
+    sites: fetchedSites,
+    isError,
+    isLoading: isSitesLoading,
+    refreshSites,
+  } = useFetchSites();
+  
+  const { org, isLoading: isOrgLoading } = useFetchOrganization();
   const { deleteSite } = useDeleteSite();
   const [sites, setSites] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +26,6 @@ const SiteTable = () => {
   const [dropdownVisible, setDropdownVisible] = useState<string | null>(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [siteIdToDelete, setSiteIdToDelete] = useState<string | null>(null);
-  // const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,16 +40,29 @@ const SiteTable = () => {
     }
   }, [isModalOpen]);
 
-  if (isError) console.log(`error: ${isError}`);
-  if (isLoading) return <p>Loading...</p>;
+  // Handle loading states
+  if (isSitesLoading || isOrgLoading) {
+    return <p>Loading...</p>;
+  }
 
+  // Handle error state
+  if (isError) {
+    return <p>Error loading sites. Please try again later.</p>;
+  }
+
+  // Handle case where sites data is not in expected format
   if (!Array.isArray(sites)) {
     return <p>No Sites Available.</p>;
   }
 
-  const filteredSites = sites.filter(
-    (site: any) => site.organizationId === org[0]?.id
-  );
+  // Handle case where org data is not available
+  if (!org || !Array.isArray(org) || org.length === 0) {
+    return <p>Organization data not available. Please try again later.</p>;
+  }
+
+  const filteredSites = sites.filter((site: any) => {
+    return site.organizationId === org[0]?.id;
+  });
 
   const handleAddSite = () => {
     setEditingSiteId(null);
@@ -72,18 +90,18 @@ const SiteTable = () => {
 
     try {
       await deleteSite(siteIdToDelete);
-
-      // Remove the deleted site from local state
       setSites((prevSites) =>
         prevSites.filter((site) => site.id !== siteIdToDelete)
       );
-
-      // Reset deletion state
       setSiteIdToDelete(null);
-      setIsConfirmationModalOpen(false); // Close the confirmation modal
+      setIsConfirmationModalOpen(false);
     } catch (error) {
       console.error("Error deleting site:", error);
     }
+  };
+
+  const handleSiteCreated = () => {
+    refreshSites();
   };
 
   const toggleDropdown = (siteId: string) => {
@@ -148,6 +166,7 @@ const SiteTable = () => {
         onClose={handleCloseModal}
         siteData={selectedSite}
         siteId={selectedSite?.id}
+        onFormCreated={handleSiteCreated}
       />
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}

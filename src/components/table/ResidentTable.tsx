@@ -1,17 +1,17 @@
 import { useState } from "react";
-import "./styles.scss";
-import AddPersonnelModal from "../modals/AddPersonnelModal";
-import Table from "../table/Table";
+import Table from "./Table";
 import useFetchUsers from "../../hooks/useFetchUsers";
 import DropdownMenu from "../modals/DropdownMenu";
+import AddResidentModal from "../modals/AddResidentModal";
+import "./styles.scss";
 
-const PersonnelTable = () => {
+const ResidentTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [_, setIsConfirmationModalOpen] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState<string | null>(null);
 
   const { users, userLoading, userError, refreshPersonnel } = useFetchUsers();
-
+console.log('users', users)
   if (userError) console.log(`error: ${userError}`);
   if (userLoading) return <p>Loading...</p>;
   if (!Array.isArray(users)) {
@@ -19,7 +19,7 @@ const PersonnelTable = () => {
   }
 
   const filteredPersonnel = users?.filter(
-    (user: any) => user.role === "PERSONNEL"
+    (user: any) => user.role === "RESIDENT"
   );
 
   const handleAddPersonnel = () => {
@@ -76,33 +76,26 @@ const PersonnelTable = () => {
   return (
     <>
       <Table
-        headers={[
-          "Name",
-          "Phone Number",
-          "Status",
-          "Current Site Location",
-          "Actions",
-        ]}
+        headers={["Name", "Phone Number", "Status", "Complex", "Actions"]}
         data={filteredPersonnel}
         renderIcons={renderIcons}
         renderRow={(person) => (
           <>
             <td>
-              {person?.firstName} {" "}
-              {person?.lastName}
+              {person?.firstName} {person?.lastName}
             </td>
             <td>{person?.phoneNumber}</td>
-            <td>On Duty</td>
-            <td>Marimba Park</td>
+            <td>Tenant</td>
+            <td>Apple Arena</td>
           </>
         )}
-        buttonName="Add Personnel"
+        buttonName="Add Resident"
         onButtonClick={handleAddPersonnel}
-        emptyStateMessage="No personnel available. To add personnel, click the Add Personnel button."
+        emptyStateMessage="No resident available. To add resident, click the Add resident button."
         emptyStateImage="/personnel.svg"
         itemsPerPage={20}
       />
-      <AddPersonnelModal
+      <AddResidentModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onFormCreated={handlePersonnelCreated}
@@ -111,4 +104,4 @@ const PersonnelTable = () => {
   );
 };
 
-export default PersonnelTable;
+export default ResidentTable;

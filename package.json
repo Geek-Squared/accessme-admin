@@ -8,7 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "vite preview"
+    "start": "vite preview",
+    "test": "vitest",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -20,6 +24,7 @@
     "aws-sdk": "^2.1691.0",
     "convex": "^1.16.2",
     "html2pdf.js": "^0.10.2",
+    "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-color": "^2.19.3",
     "react-color-palette": "^7.3.0",
@@ -28,21 +33,32 @@
     "react-hook-form": "^7.53.0",
     "react-router-dom": "^6.26.2",
     "react-toastify": "^10.0.6",
+    "recharts": "^2.15.0",
     "swr": "^2.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.14",
     "@types/react": "^18.3.3",
     "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-c8": "^0.33.0",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jsdom": "^25.0.1",
     "sass": "^1.78.0",
+    "ts-jest": "^29.2.5",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vitest": "^2.1.8"
   }
 }

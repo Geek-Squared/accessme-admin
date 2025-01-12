@@ -1,0 +1,144 @@
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.custom-modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-close-icon {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+}
+
+.custom-modal-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 16px 24px 0;
+  color: #444;
+  text-align: center;
+}
+
+.custom-form-group {
+  margin: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.custom-input,
+.custom-textarea,
+.custom-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.custom-textarea {
+  resize: vertical;
+}
+
+.custom-button {
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.custom-add-field-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  margin-top: 8px;
+}
+
+.custom-add-field-btn:hover {
+  background-color: #0056b3;
+}
+
+.custom-remove-field-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  margin-top: 4px;
+}
+
+.custom-remove-field-btn:hover {
+  background-color: #a71d2a;
+}
+
+.custom-submit-btn {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  margin: 16px auto 24px;
+  align-self: center;
+  width: 100%;
+}
+
+.custom-submit-btn:disabled {
+  background-color: #6c757d;
+}
+
+.custom-dynamic-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.custom-dynamic-field input,
+.custom-dynamic-field select {
+  flex: 1;
+}
+
+.custom-dynamic-field label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.custom-scrollable-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 16px 24px;
+}
+
+.custom-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollable-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.custom-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}

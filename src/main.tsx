@@ -6,7 +6,6 @@ import {
   Outlet,
   useLocation,
 } from "react-router-dom";
-import App from "./App.tsx";
 import Register from "./pages/auth/signup.tsx";
 
 import Login from "./pages/auth/login.tsx";
@@ -20,6 +19,8 @@ import UserTable from "./components/table/UsersTable.tsx";
 import VisitorsTable from "./components/table/VisitorsTable.tsx";
 import Profile from "./pages/profile.tsx";
 import ConfigTable from "./components/table/ConfigTable.tsx";
+import ResidentTable from "./components/table/ResidentTable.tsx";
+import Dashboard from "./components/dashboard/Dashboard.tsx";
 
 const Layout = () => {
   const location = useLocation();
@@ -42,9 +43,13 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
+      // {
+      //   path: "/",
+      //   element: <ProtectedRoute element={<Dashboard />} />,
+      // },
       {
         path: "/",
-        element: <ProtectedRoute element={<App />} />,
+        element: <ProtectedRoute element={<Dashboard />} />,
       },
       {
         path: "/forms",
@@ -57,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: "/personnel",
         element: <ProtectedRoute element={<PersonnelTable />} />,
+      },
+      {
+        path: "/residents",
+        element: <ProtectedRoute element={<ResidentTable />} />,
       },
       {
         path: "/sites/visitors-log/:siteId",

@@ -17,20 +17,25 @@ const fetcher = (...args: [RequestInfo, RequestInit?]) => {
   });
 };
 
-
 function useFetchSites() {
-  const { data, error, isLoading } = useSWR(
-    `${apiUrl}/site`,
-    fetcher,
-    {
-      revalidateOnFocus: false, // Disable revalidation on focus
-      dedupingInterval: 60000,  // Deduping interval of 1 minute
-    }
-  );
+  const {
+    data,
+    error,
+    isLoading,
+    mutate: mutateForms,
+  } = useSWR(`${apiUrl}/site`, fetcher, {
+    revalidateOnFocus: false, // Disable revalidation on focus
+    dedupingInterval: 60000, // Deduping interval of 1 minute
+  });
+
+  const refreshSites = () => {
+    return mutateForms();
+  };
   return {
     sites: data,
     isLoading,
     isError: error,
+    refreshSites,
   };
 }
 

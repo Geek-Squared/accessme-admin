@@ -17,11 +17,22 @@ function useFetchUsers() {
       return res.json();
     });
   };
-  const { data, error, isLoading } = useSWR(`${apiUrl}/user`, fetcher);
+  const {
+    data,
+    error,
+    isLoading,
+    mutate: mutateForms,
+  } = useSWR(`${apiUrl}/user`, fetcher);
+
+  const refreshPersonnel = () => {
+    return mutateForms();
+  };
+
   return {
     users: data,
     userLoading: isLoading,
     userError: error,
+    refreshPersonnel,
   };
 }
 
