@@ -63,7 +63,7 @@ const groupByMonthAndCategory = (visitors: any[]) => {
 };
 
 const Dashboard = () => {
-  const { users, userLoading, userError } = useFetchUsers();
+  const { users } = useFetchUsers();
   const { sites } = useFetchSites();
   const { forms } = useFetchCustomForms();
   const { visitors } = useFetchVisitors();

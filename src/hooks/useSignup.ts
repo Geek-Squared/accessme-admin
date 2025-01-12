@@ -1,5 +1,5 @@
 import useSWR, { mutate } from "swr";
-import { apiUrl } from "../utils/apiUrl";
+// import { apiUrl } from "../utils/apiUrl";
 
 const fetcher = (url: string, options: any) =>
   fetch(url, options).then((res) => res.json());

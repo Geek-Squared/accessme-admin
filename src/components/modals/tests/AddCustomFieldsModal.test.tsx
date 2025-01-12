@@ -1,3 +1,4 @@
+//@ts-ignore
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -117,7 +118,7 @@ describe('AddCustomFieldsModal', () => {
   });
 
   it('should submit form data correctly', async () => {
-    const mockToastLoading = jest.fn();
+    // const mockToastLoading = jest.fn();
     const mockToastUpdate = jest.fn();
     (toast.loading as jest.Mock).mockReturnValue('toast-id');
     (toast.update as jest.Mock).mockImplementation(mockToastUpdate);
@@ -168,7 +169,7 @@ describe('AddCustomFieldsModal', () => {
     const error = new Error('Submission failed');
     mockCreateCategory.mockRejectedValueOnce(error);
     
-    const mockToastLoading = jest.fn();
+    // const mockToastLoading = jest.fn();
     const mockToastUpdate = jest.fn();
     (toast.loading as jest.Mock).mockReturnValue('toast-id');
     (toast.update as jest.Mock).mockImplementation(mockToastUpdate);

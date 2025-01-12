@@ -36,9 +36,9 @@ const UserTable = () => {
     setIsConfirmationModalOpen(true);
   };
 
-  const handleUserCreated = () => {
-    refreshUsers();
-  };
+  // const handleUserCreated = () => {
+  //   refreshUsers();
+  // };
 
   const renderIcons = (user: any) => [
     <div className="actions-container" key={user.id}>

@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useCreateCustomForm from "../../hooks/useCreateCustomForm";
+import useFetchSites from "../../hooks/useFetchSites";
 import "./custom.scss";
 
 interface IAddSiteModal {
@@ -17,6 +18,7 @@ interface IAddSiteModal {
 interface FormValues {
   name: string;
   description: string;
+  siteId: string; // To store the selected site ID
   fields: {
     name: string;
     type: string;
@@ -37,8 +39,15 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
       defaultValues: {
         name: "",
         description: "",
+        siteId: "", // Default empty selection for site
         fields: [
-          { name: "", type: "TEXT", required: false, useScanner: false, test: "111" },
+          {
+            name: "",
+            type: "TEXT",
+            required: false,
+            useScanner: false,
+            test: "111",
+          },
         ],
       },
     });
@@ -49,9 +58,9 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
   });
 
   const { createCategory, isLoading } = useCreateCustomForm();
+  const { sites } = useFetchSites(); // Fetch sites data
 
   const onSubmit = async (data: FormValues) => {
-    // Show loading toast
     const loadingToast = toast.loading("Creating form...", {
       position: "top-right",
     });
@@ -60,18 +69,17 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
       await createCategory({
         name: data.name,
         description: data.description,
-        siteId: 1,
+        siteId: Number(data.siteId), // Use the selected site's ID
         fields: data.fields,
       });
-      
-      // Update loading toast to success
+
       toast.update(loadingToast, {
         render: "Form created successfully!",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
-      
+
       reset();
       onClose();
       if (onFormCreated) {
@@ -79,8 +87,7 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
       }
     } catch (error) {
       console.error("Error creating category:", error);
-      
-      // Update loading toast to error
+
       toast.update(loadingToast, {
         render: "Failed to create form. Please try again.",
         type: "error",
@@ -124,6 +131,24 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
                   {...register("description")}
                   placeholder="Enter category description"
                 />
+              </div>
+              <div className="custom-form-group">
+                <label>Select Site</label>
+                <select
+                  className="custom-select"
+                  {...register("siteId", {
+                    required: "Please select a site",
+                  })}
+                >
+                  <option value="" disabled>
+                    -- Select a Site --
+                  </option>
+                  {sites?.map((site: any) => (
+                    <option key={site.id} value={site.id}>
+                      {site.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="custom-form-group">
                 <label>Category Fields</label>
@@ -201,7 +226,7 @@ const AddCustomFieldsModal: FC<IAddSiteModal> = ({
                       type: "TEXT",
                       required: false,
                       useScanner: false,
-                      test: "11222"
+                      test: "11222",
                     })
                   }
                 >

@@ -1,5 +1,5 @@
 // hooks/useFetchCustomForms.ts
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { apiUrl } from "../utils/apiUrl";
 
 const fetcher = (...args: [RequestInfo, RequestInit?]) => {

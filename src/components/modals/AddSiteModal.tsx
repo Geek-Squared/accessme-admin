@@ -81,6 +81,7 @@ const AddSiteModal: FC<IAddSiteModal> = ({
     };
 
     try {
+      //@ts-ignore
       let response;
       if (siteId) {
         response = await updateSite(siteDataToSubmit);
