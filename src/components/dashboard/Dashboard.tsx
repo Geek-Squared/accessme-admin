@@ -68,6 +68,8 @@ const Dashboard = () => {
   const { forms } = useFetchCustomForms();
   const { visitors } = useFetchVisitors();
 
+  console.log('visitors', visitors)
+
   const personnel =
     users?.filter((user: { role: string }) => user.role === "PERSONNEL") || [];
   const activePersonnelCount = personnel.length;
@@ -84,25 +86,25 @@ const Dashboard = () => {
     {
       title: "Total Sites",
       value: currentSiteCount,
-      change: siteChange, // Dynamic change value
+      change: siteChange,
       icon: <Building2 className="h-6 w-6" />,
     },
     {
       title: "Active Personnel",
       value: activePersonnelCount,
-      change: 5, // Static example, replace with actual dynamic value if needed
+      change: 5,
       icon: <Users className="h-6 w-6" />,
     },
     {
       title: "Custom Forms",
       value: forms?.length || 0,
-      change: 3, // Static example, replace with actual dynamic value if needed
+      change: 3,
       icon: <FileText className="h-6 w-6" />,
     },
     {
       title: "Security Checks",
-      value: 156, // Static example, replace with actual dynamic value if needed
-      change: 23, // Static example
+      value: visitors?.length,
+      change: 23,
       icon: <ShieldCheck className="h-6 w-6" />,
     },
   ];
