@@ -4,6 +4,7 @@ import useFetchUsers from "../../hooks/useFetchUsers";
 import DropdownMenu from "../modals/DropdownMenu";
 import AddResidentModal from "../modals/AddResidentModal";
 import "./styles.scss";
+import useFetchSites from "../../hooks/useFetchSites";
 
 const ResidentTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,7 +12,9 @@ const ResidentTable = () => {
   const [dropdownVisible, setDropdownVisible] = useState<string | null>(null);
 
   const { users, userLoading, userError, refreshPersonnel } = useFetchUsers();
-console.log('users', users)
+  const { sites } = useFetchSites();
+
+  console.log("users", users);
   if (userError) console.log(`error: ${userError}`);
   if (userLoading) return <p>Loading...</p>;
   if (!Array.isArray(users)) {
@@ -22,9 +25,16 @@ console.log('users', users)
     (user: any) => user.role === "RESIDENT"
   );
 
+  const getSiteName = (sitesId: string) => {
+    const matchingSite = sites?.find((site: any) => site.id === sitesId);
+    console.log("Matching site for sitesId:", sitesId, matchingSite);
+    return matchingSite?.name || "Unknown Site";
+  };
+
   const handleAddPersonnel = () => {
     setIsModalOpen(true);
   };
+
   const toggleDropdown = (siteId: string) => {
     setDropdownVisible((prev) => (prev === siteId ? null : siteId));
   };
@@ -34,7 +44,6 @@ console.log('users', users)
   };
 
   const confirmDelete = () => {
-    // setSiteIdToDelete(siteId);
     setIsConfirmationModalOpen(true);
   };
 
@@ -76,7 +85,7 @@ console.log('users', users)
   return (
     <>
       <Table
-        headers={["Name", "Phone Number", "Status", "Complex", "Actions"]}
+        headers={["Name", "Phone Number", "Site", "Actions"]}
         data={filteredPersonnel}
         renderIcons={renderIcons}
         renderRow={(person) => (
@@ -85,8 +94,8 @@ console.log('users', users)
               {person?.firstName} {person?.lastName}
             </td>
             <td>{person?.phoneNumber}</td>
-            <td>Tenant</td>
-            <td>Apple Arena</td>
+            {/* <td>Tenant</td> */}
+            <td>{getSiteName(person.sitesId)}</td>
           </>
         )}
         buttonName="Add Resident"

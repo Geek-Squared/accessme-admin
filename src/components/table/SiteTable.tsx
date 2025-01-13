@@ -28,6 +28,8 @@ const SiteTable = () => {
   const [siteIdToDelete, setSiteIdToDelete] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  console.log('sites', sites)
+
   useEffect(() => {
     if (fetchedSites) {
       setSites(fetchedSites);

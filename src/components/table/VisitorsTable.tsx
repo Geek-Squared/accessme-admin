@@ -1,21 +1,65 @@
 import useFetchVisitors from "../../hooks/useFetchVisitors";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import Table from "../table/Table";
 import FieldModal from "../modals/FieldModal";
 
 const VisitorsTable = () => {
   const { visitors, isError, isLoading } = useFetchVisitors();
-
-  // State to track selected category and selected visitor
+  const { siteId } = useParams();
   const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
   const [selectedVisitor, setSelectedVisitor] = useState<any | null>(null);
 
-  // Open modal with visitor details
+  // Helper function to format date-time
+  const formatDateTime = (dateStr: string) => {
+    if (!dateStr) return "N/A";
+    try {
+      return new Date(dateStr).toLocaleString();
+    } catch (e) {
+      return dateStr;
+    }
+  };
+
+  // Helper function to identify entry time fields
+  const getEntryTimeValue = (renderedFields: Record<string, any>) => {
+    const entryPatterns = [
+      /entry\s*time/i,
+      /time\s*in/i,
+      /check\s*in/i,
+      /arrival/i,
+      /ingreso/i,
+    ];
+
+    for (const [key, value] of Object.entries(renderedFields)) {
+      if (entryPatterns.some((pattern) => pattern.test(key))) {
+        return formatDateTime(value);
+      }
+    }
+    return "N/A";
+  };
+
+  // Helper function to identify exit time fields
+  const getExitTimeValue = (renderedFields: Record<string, any>) => {
+    const exitPatterns = [
+      /exit\s*time/i,
+      /time\s*out/i,
+      /check\s*out/i,
+      /departure/i,
+      /salida/i,
+    ];
+
+    for (const [key, value] of Object.entries(renderedFields)) {
+      if (exitPatterns.some((pattern) => pattern.test(key))) {
+        return formatDateTime(value);
+      }
+    }
+    return "N/A";
+  };
+
   const handleViewDetails = (visitor: any) => {
     setSelectedVisitor(visitor);
   };
 
-  // Close modal
   const handleCloseModal = () => {
     setSelectedVisitor(null);
   };
@@ -27,30 +71,46 @@ const VisitorsTable = () => {
     return <p>No visitors available.</p>;
   }
 
-  // Extract unique categories
   const categories = visitors
     .map((visitor) => visitor.category)
     .filter(
-      (category, index, self) => category && self.indexOf(category) === index
+      (category, index, self) =>
+        category &&
+        self.indexOf(category) === index &&
+        //@ts-ignore
+        category.siteId === parseInt(siteId)
     );
 
-  // Filter visitors by selected category
   const filteredVisitors = selectedCategory
     ? visitors.filter(
-        (visitor) => visitor.category?.id === selectedCategory?.id
+        (visitor) =>
+          visitor.category?.id === selectedCategory?.id &&
+          //@ts-ignore
+          visitor.category?.siteId === parseInt(siteId)
       )
     : [];
 
-  // Dynamic headers for visitors' details
-  const dynamicHeaders = visitors[0]?.renderedFields
-    ? Object.keys(visitors[0].renderedFields)
-    : [];
-  const additionalHeaders = ["onSite", "categoryId", "userId"];
-  const allHeaders = [...dynamicHeaders, ...additionalHeaders, "Action"];
+  // Get all rendered field headers except entry/exit times
+  const getCustomHeaders = () => {
+    if (!filteredVisitors.length) return [];
+    const firstVisitor = filteredVisitors[0];
+    return Object.keys(firstVisitor.renderedFields).filter((header) => {
+      const headerLower = header.toLowerCase();
+      return (
+        !headerLower.includes("time") &&
+        !headerLower.includes("entry") &&
+        !headerLower.includes("exit")
+      );
+    });
+  };
+
+  // Combine all headers
+  const customHeaders = getCustomHeaders();
+  const standardHeaders = ["Entry Time", "Exit Time", "onSite", "Action"];
+  const allHeaders = [...customHeaders, ...standardHeaders];
 
   return (
     <div>
-      {/* Display categories table if no category is selected */}
       {!selectedCategory && (
         <Table
           headers={["Category Name", "Description", "Action"]}
@@ -66,14 +126,13 @@ const VisitorsTable = () => {
               </td>
             </>
           )}
-          emptyStateMessage="No categories available."
+          emptyStateMessage="No categories available for this site."
           itemsPerPage={10}
           buttonName={""}
           isHeader={false}
         />
       )}
 
-      {/* Display visitors table for the selected category */}
       {selectedCategory && (
         <div>
           <Table
@@ -81,13 +140,14 @@ const VisitorsTable = () => {
             data={filteredVisitors}
             renderRow={(visitor) => (
               <>
-                {allHeaders.slice(0, -1).map((header) => (
+                {customHeaders.map((header) => (
                   <td key={header}>
-                    {header in visitor.renderedFields
-                      ? visitor.renderedFields[header]
-                      : visitor[header] ?? "N/A"}
+                    {visitor.renderedFields[header] || "N/A"}
                   </td>
                 ))}
+                <td>{getEntryTimeValue(visitor.renderedFields)}</td>
+                <td>{getExitTimeValue(visitor.renderedFields)}</td>
+                <td>{visitor.onSite ? "Yes" : "No"}</td>
                 <td>
                   <button onClick={() => handleViewDetails(visitor)}>
                     View Details
@@ -110,12 +170,15 @@ const VisitorsTable = () => {
       >
         {selectedVisitor && (
           <div>
-            <h3>Rendered Fields</h3>
+            <h3>Visitor Details</h3>
             <ul>
               {Object.entries(selectedVisitor.renderedFields).map(
                 ([key, value]: any) => (
                   <li key={key}>
-                    <strong>{key}:</strong> {value}
+                    <strong>{key}:</strong>{" "}
+                    {key.toLowerCase().includes("time")
+                      ? formatDateTime(value)
+                      : value}
                   </li>
                 )
               )}
