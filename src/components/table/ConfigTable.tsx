@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import useFetchSites from "../../hooks/useFetchSites";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Table from "./Table";
 import DropdownMenu from "../modals/DropdownMenu";
 import ConfirmationModal from "../modals/ConfirmationModal";
@@ -24,7 +24,7 @@ const ConfigTable = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [siteIdToDelete, setSiteIdToDelete] = useState<string | null>(null);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     if (fetchedSites) {
