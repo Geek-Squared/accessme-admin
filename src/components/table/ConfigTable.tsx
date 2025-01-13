@@ -141,7 +141,7 @@ const ConfigTable = () => {
         renderRow={(form) => (
           <>
             <td>{form?.name}</td>
-            <td onClick={() => navigate(`visitors-log/${form.id}`)}>
+            <td>
               {form?.siteName}
             </td>
             <td>{renderFormIcons(form)}</td>
